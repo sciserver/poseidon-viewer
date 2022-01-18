@@ -1,28 +1,60 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <notifications position="bottom center" group="notify"/>
+
+    <v-navigation-drawer v-model="drawerRight" app right width="400">
+      <RightDrawer/>
+    </v-navigation-drawer>
+    
+    <v-main>
+      
+      <OpenLayers/>
+      
+      <v-btn
+        fab
+        dark
+        x-small
+        color="primary"
+        class="button-right"
+        @click="drawerRight = !drawerRight"
+      >
+        <v-icon dark>
+          mdi-menu
+        </v-icon>
+      </v-btn>
+
+    </v-main>
+
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import OpenLayers from './components/OpenLayers';
+import RightDrawer from './components/RightDrawer';
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
-  }
-}
+    RightDrawer,
+    OpenLayers
+  },
+
+  data: () => ({
+    drawerRight: true
+  }),
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped>
+.button-left {
+  position: absolute;
+  bottom: 16px;
+  left: 16px;
+}
+.button-right {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
 }
 </style>
