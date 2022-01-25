@@ -7,7 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     timestamp: 0,
-    maxTimestamp: 1504,
+    maxTimestamp: 239,
     depth: 0,
     maxDepth: 89,
     variable: 'SSS',
