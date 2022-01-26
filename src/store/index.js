@@ -21,6 +21,10 @@ export default new Vuex.Store({
         label: 'Temperature',
       },
       {
+        name: 'Eta',
+        label: 'Surface height anomaly',
+      },
+      {
         name: 'velocity',
         label: 'Vorticity'
       }

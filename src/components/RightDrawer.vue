@@ -115,11 +115,14 @@ export default {
       if (this.variable == 'velocity') {
         this.colormap = 'seismic'
       } 
-      else if (this.variable == 'SST') {
+      else if (this.variable == 'SST' || this.variable == 'Eta') {
         this.colormap = 'RdBu_r'
       }
       else if (this.variable == 'SSS') {
         this.colormap = 'cmo.haline'
+      }
+      else {
+        this.colormap = 'viridis'
       }
     }
   },

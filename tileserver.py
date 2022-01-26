@@ -27,6 +27,7 @@ datasetV = zarr.open(mapper_v, mode='r')
 interpolators_path = '/srv/TileInterpolators'
 env = lmdb.open(interpolators_path)
 
+
 #A class that contains all relevant information to produce a LLC image
 class LLC_interp(object): 
     def __init__(self,geom, N,M,Proj,b=False):
@@ -44,7 +45,9 @@ class LLC_interp(object):
         self.pixel_grid = buildPixelGridProj(M,Proj)
         self.weights, self.vertices  = getWeights(self.geom_grid,self.pixel_grid)
 
-class LLC_interp_tile(object):
+
+#A class that contains all relevant information to produce a LLC image
+class LLC_interp_tile(object): 
     def __init__(self, coords, args):
         depthImg = args['dImg']
         w = args['w']
@@ -56,22 +59,22 @@ class LLC_interp_tile(object):
 
         dim = 2**(self.z)
         t = w.M//dim
-       
+        
         image = np.full((w.width,w.height), False, dtype=bool)
         image[t*self.y: t*(self.y+1), t*self.x: t*(self.x+1)] = True
         image = np.ravel(image)
-       
+        
         sMask = np.ravel(depthImg > 0.)
         px = [0,0,0,0]
         self.imMask = [0,0,0,0]
-       
+        
         for k in range(4):
             im = (w.pixel_grid[:,2]==k)&(sMask)
             self.imMask[k] = im[image]
             px[k] = w.pixel_grid[im&image,0:2]
-       
+        
         PMask = [0,0,0,0]
-       
+        
         for k in range(4):
             if px[k].shape != (0,2):
                 S = w.geom_grid[k].find_simplex(px[k])
@@ -79,44 +82,53 @@ class LLC_interp_tile(object):
                 P = np.unique(np.ravel(P))
                 PMask[k] = np.zeros(len(w.geom_grid[k].points), dtype=bool)
                 PMask[k][P] = True
-           
+            
             else:
                 PMask[k] = np.zeros(len(w.geom_grid[k].points), dtype=bool)
-       
-       
+        
+        
         geom_grid = buildInterpGrid(w.geom, w.N, PMask, True)
         self.weights, self.vertices = getWeightsMask(geom_grid, px)
-           
+            
         z0 = geom_grid[0] != None
         z1 = geom_grid[1] != None
         z2 = geom_grid[2] != None
         z3 = geom_grid[3] != None
         self.zones = (z0, z1, z2, z3)
 
-       
+        
         if np.sum(self.zones) == 0:
             w.coords = None
-           
+            
         else:
+            
+            
             z   = resampleImageTiles(d, w.N)
             Q   = buildImageGridSelect(z, w.N, PMask, self.zones)
-            uhash = np.vectorize(unhashp)
+            
+            
+            
             coords = self.tCoords(w.N, PMask, d)
-           
+            
             p = d.values[(coords.T[0], coords.T[1], coords.T[2])]
-           
+            
 
             for k in range(4):
                 if self.zones[k]:
+                    
+                    
                     vert = np.take(Q[k], self.vertices[k])
                     ind = np.reshape(np.searchsorted(p, np.ravel(vert)), (-1, 3))
                     self.vertices[k] = ind
+                    
+                    
                 else:
                     self.vertices[k] = None
-       
+        
             self.coords = coords
-   
-   
+    
+    
+    
     def tCoords(self, N, MaskP, da):
         z   = resampleImageTiles(da, N)
         Q   = buildImageGridSelect(z, N, MaskP, self.zones)
@@ -124,6 +136,8 @@ class LLC_interp_tile(object):
         uhash = np.vectorize(unhashp)
 
         wPoints = np.empty(0)
+        
+        
         for k in range(4):
             if self.zones[k]:
                 points = np.ravel(np.take(Q[k], self.vertices[k]))
@@ -135,20 +149,31 @@ class LLC_interp_tile(object):
 
         return coords
         
-def makeTileFast(dl, param, x, time, depth):
+    def addVelocities(self, dv):
+        self.cs = dv['CS'].get_coordinate_selection((self.coords.T[0], self.coords.T[1], self.coords.T[2]))
+        self.sn = dv['SN'].get_coordinate_selection((self.coords.T[0], self.coords.T[1], self.coords.T[2]))
+
+
+def makeTileScalar(dl, x, param, time, depth):
     #-------------------------------
     # resample the image pixels
     #-------------------------------
     if param == 'Theta':
-        fill = -10
+        fill = -10.0
+    elif param == 'Eta':
+        fill = -15.0
     else:
         fill = 0
-
+    
+    
     img = np.full(256*256, fill, dtype=np.single)
 
 
     if np.sum(x.zones) != 0:
-        Q = dl[param].get_coordinate_selection((np.full(x.coords.shape[0], time), np.full(x.coords.shape[0], depth), x.coords.T[0], x.coords.T[1], x.coords.T[2]))
+        if param == 'Eta':
+            Q = dl[param].get_coordinate_selection((np.full(x.coords.shape[0], time), x.coords.T[0], x.coords.T[1], x.coords.T[2]))
+        else:
+            Q = dl[param].get_coordinate_selection((np.full(x.coords.shape[0], time), np.full(x.coords.shape[0], depth), x.coords.T[0], x.coords.T[1], x.coords.T[2]))
 
         for k in range(4):
             if x.zones[k]:
@@ -160,62 +185,63 @@ def makeTileFast(dl, param, x, time, depth):
 
     img = np.reshape(img,(256,256))
 
+
     if param == 'Theta':
-        img = (img+10)*1000
-    else:
-        img = img*1000
+        img = (img + 10.0) * 1000
+    elif param == 'Eta':
+        img = (img + 15.0) * 1000
+    else:    
+        img = img * 1000
 
     img = img.astype('uint16')
     return img
 
+
 def makeTileVelocities(dl, x, time, depth):
     fill=0
-   
-   
+
+
     imgU = np.full(256*256, fill, dtype=np.single)
     imgV = np.full(256*256, fill, dtype=np.single)
 
 
-   
+
     if np.sum(x.zones) != 0:
-       
+
         Qu = dl['U'].get_coordinate_selection((np.full(x.coords.shape[0], time), np.full(x.coords.shape[0], depth), x.coords.T[0], x.coords.T[1], x.coords.T[2]))
         Qv = dl['V'].get_coordinate_selection((np.full(x.coords.shape[0], time), np.full(x.coords.shape[0], depth), x.coords.T[0], x.coords.T[1], x.coords.T[2]))
-       
+
         Qsn = x.sn
         Qcs = x.cs
 
-
-        #Qsn = dl['SN'].get_coordinate_selection((x.coords.T[0], x.coords.T[1], x.coords.T[2]))
-        #Qcs = dl['CS'].get_coordinate_selection((x.coords.T[0], x.coords.T[1], x.coords.T[2]))
-       
         Qur = np.multiply(Qu, Qcs) - np.multiply(Qv, Qsn)
         Qvr = np.multiply(Qu, Qsn) + np.multiply(Qv, Qcs)
-       
-       
+
+
         for k in range(4):
             if x.zones[k]:
                 a = np.einsum('nj,nj->n', np.take(Qur, x.vertices[k]), x.weights[k])
                 imgU[x.imMask[k]] = a
-               
+
                 b = np.einsum('nj,nj->n', np.take(Qvr, x.vertices[k]), x.weights[k])
                 imgV[x.imMask[k]] = b
-       
+
         np.nan_to_num(imgU, copy=False, nan=fill)
         np.nan_to_num(imgV, copy=False, nan=fill)
 
 
-   
+
     imgU = np.reshape(imgU,(256,256))
     imgV = np.reshape(imgV,(256,256))
-   
+
     imgCurl = np.gradient(imgU, axis=0) - np.gradient(imgV, axis=1)
-   
+
     imgCurl = np.arcsinh(3*imgCurl)
 
-    imgCurl = (32768*(imgCurl+1)).astype('uint16')
-   
+    imgCurl = (32768 * (imgCurl + 1)).astype('uint16')
+
     return imgCurl
+
 
 class TileRequestHandler:
     def on_get(self, req, res):
@@ -244,7 +270,7 @@ class TileRequestHandler:
         if variable == 'velocity':
             tile = makeTileVelocities(datasetV, interpolator, int(timestamp), depth)
         else:
-            tile = makeTileFast(dataset, variable, interpolator, int(timestamp), depth)
+            tile = makeTileScalar(dataset, interpolator, variable, int(timestamp), depth)
         
         normalize = mpl.colors.Normalize(vmin=query['min'], vmax=query['max'])
         colormap = plt.get_cmap(query['colormap'])
@@ -278,9 +304,11 @@ app.add_sink(TileRequestHandler().on_get, prefix)
 app.add_sink(InterpolatorRequestHandler().on_get, '/api/interpolators/')
 app.add_static_route('/viewer', os.path.abspath('./dist'))
 
+
 class CustomWSGIRequestHandler(WSGIRequestHandler):
     def log_message(self, format, *args):
         pass
+
 
 if __name__ == '__main__':
     port = 8000
