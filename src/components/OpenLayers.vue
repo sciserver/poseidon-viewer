@@ -22,6 +22,7 @@ import Button from 'ol-ext/control/Button';
 import GeoJSON from 'ol/format/GeoJSON';
 import { copyTextToClipboard } from '../clipboard.js';
 import { format as coordinateFormat } from 'ol/coordinate';
+import axios from 'axios';
 
 export default {
   data: () => ({
@@ -33,7 +34,8 @@ export default {
       toolButtons: {
         drawPolygon: null,
         select: null,
-        delete: null
+        delete: null,
+        store: null
       },
       interactions: {
         select: null,
@@ -172,6 +174,15 @@ export default {
         },
       });
       controlBar.addControl(this.toolButtons.export);
+
+      this.toolButtons.store = new Button({
+        html: '<i class="mdi mdi-tray-arrow-down"></i>',
+        handleClick: () => {	
+          this.storeSelected();
+        },
+      });
+      controlBar.addControl(this.toolButtons.store);
+
     },
 
     resetInteractions() {
@@ -227,8 +238,32 @@ export default {
 
     exportSelected() {
       let obj = [];
-      this.interactions.select.getFeatures().forEach((f) => obj.push(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326'))));
-      copyTextToClipboard((obj));
+      this.interactions.select.getFeatures().forEach((f) => obj.push(JSON.parse(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326')))));
+      copyTextToClipboard(JSON.stringify(obj));
+    },
+
+    storeSelected() {
+      let obj = [];
+      this.interactions.select.getFeatures().forEach((f) => obj.push(JSON.parse(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326')))));
+      axios.post(process.env.VUE_APP_SERVICE_URL + '/api/shapes', obj)
+          .then(() => {
+            this.$notify({
+              group: 'notify',
+              type: 'success',
+              duration: 1000,
+              position: 'bottom center',
+              text: 'Shapes stored'
+            });
+          })
+          .catch((error) => {
+            this.$notify({
+              group: 'notify',
+              type: 'error',
+              duration: 1000,
+              position: 'bottom center',
+              text: error
+            });
+          });
     }
   },
 };
