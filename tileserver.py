@@ -284,26 +284,35 @@ class TileRequestHandler:
     
 
 class InterpolatorRequestHandler:
-	def on_get(self, req, res):
-		query = falcon.uri.parse_query_string(req.query_string)
-		key = req.path[len('/api/interpolators/'):]
-		params = key.split('/')
-		z = params[0]
-		x = params[1]
-		y = params[2]
-		
-		with env.begin(write=False) as txn:
-	    		key='{}/{}/{}'.format(z, x, y)
-	    		interpolator = txn.get(key.encode())
-		
-		res.content_type = 'application/octet-stream'
-		res.data = interpolator
+    def on_get(self, req, res):
+        query = falcon.uri.parse_query_string(req.query_string)
+        key = req.path[len('/api/interpolators/'):]
+        params = key.split('/')
+        z = params[0]
+        x = params[1]
+        y = params[2]
+        
+        with env.begin(write=False) as txn:
+                key='{}/{}/{}'.format(z, x, y)
+                interpolator = txn.get(key.encode())
+        
+        res.content_type = 'application/octet-stream'
+        res.data = interpolator
+
+
+class ShapesRequestHandler:
+    def on_get(self, req, res):
+        res.content_type = 'application/json'
+        res.data = value
+    def on_post(self, req, res):
+        global value
+        value = req.bounded_stream.read()
 
 app = falcon.App()
 app.add_sink(TileRequestHandler().on_get, prefix)
 app.add_sink(InterpolatorRequestHandler().on_get, '/api/interpolators/')
 app.add_static_route('/viewer', os.path.abspath('./dist'))
-
+app.add_route('/api/shapes', ShapesRequestHandler())
 
 class CustomWSGIRequestHandler(WSGIRequestHandler):
     def log_message(self, format, *args):
