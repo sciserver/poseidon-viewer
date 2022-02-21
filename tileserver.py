@@ -308,11 +308,40 @@ class ShapesRequestHandler:
         global value
         value = req.bounded_stream.read()
 
+class ColorMapRequestHandler:
+    def on_get(self, req, res):
+        query = falcon.uri.parse_query_string(req.query_string)
+        vmin = float(query['vmin'])
+        vmax = float(query['vmax'])
+        colormap = query['colormap']
+        normalize = mpl.colors.Normalize(vmin=vmin, vmax=vmax)
+        step = (vmax - vmin) / 255.0
+        cmap = plt.get_cmap(colormap)
+        a = np.zeros((10, 256))
+        for i in range(0, 256):
+                a[:,i] = vmin + step*i
+        image = Image.fromarray(np.uint8(cmap(normalize(a)) * 255))
+        fig, ax = plt.subplots()
+        ticks = np.linspace(1,256,8) - 1
+        ticklabels = ["{:6.2f}".format(i) for i in (vmin + step*ticks)]
+        ax.set_xticks(ticks)
+        ax.set_xticklabels(ticklabels)
+        ax.set_yticks([])
+        plt.imshow(image)
+        with BytesIO() as buf:
+            plt.savefig(buf, bbox_inches='tight', format='png')
+            buf.seek(0)
+            res.content_type = 'image/png'
+            res.data = buf.read()
+        plt.close('all')
+
+
 app = falcon.App()
 app.add_sink(TileRequestHandler().on_get, prefix)
 app.add_sink(InterpolatorRequestHandler().on_get, '/api/interpolators/')
 app.add_static_route('/viewer', os.path.abspath('./dist'))
 app.add_route('/api/shapes', ShapesRequestHandler())
+app.add_route('/api/colormap', ColorMapRequestHandler())
 
 class CustomWSGIRequestHandler(WSGIRequestHandler):
     def log_message(self, format, *args):

@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     getUrlTemplate() {
-        return process.env.VUE_APP_SERVICE_URL + `/api/values/${this.variable}/${this.timestamp.toString().padStart(4,'0')}/{z}/{x}/{y}/${this.depth}?colormap=${this.colormap}&min=${this.min}&max=${this.max}`;
+        return process.env.VUE_APP_SERVICE_URL + `/api/values/${this.variable.name}/${this.timestamp.toString().padStart(4,'0')}/{z}/{x}/{y}/${this.depth}?colormap=${this.colormap}&min=${this.min}&max=${this.max}`;
     },
     updateUrlTemplate() {
         this.layer.getSource().setUrl(this.getUrlTemplate())

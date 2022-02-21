@@ -15,18 +15,30 @@ export default new Vuex.Store({
       {
         name: 'SSS',
         label: 'Salinity',
+        vmin: 30,
+        vmax: 37,
+        units: 'PSU'
       },
       {
         name: 'SST',
         label: 'Temperature',
+        vmin: -1,
+        vmax: 30,
+        units: '°C'
       },
       {
         name: 'Eta',
         label: 'Surface height anomaly',
+        vmin: -2,
+        vmax: 2,
+        units: 'm'
       },
       {
         name: 'velocity',
-        label: 'Vorticity'
+        label: 'Vorticity',
+        vmin: 0,
+        vmax: 65535,
+        units: ''
       }
     ],
     colormap: 'cmo.haline',
