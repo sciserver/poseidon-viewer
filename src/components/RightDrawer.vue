@@ -19,50 +19,56 @@
         outlined
       ></v-select>
           {{variable.units}}<v-img contain :src="colormapUrl" />
-      <v-slider v-model="min" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/255.0" :label="'min'" class="align-center">
+      <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'min'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
-            v-model="min"
+            v-model="tempMin"
             type="number"
             style="width: 80px"
+            @change="updateValues()"
           ></v-text-field>
         </template>
       </v-slider>
-      <v-slider v-model="max" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/255.0" :label="'max'" class="align-center">
+      <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'max'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
-            v-model="max"
+            v-model="tempMax"
             type="number"
             style="width: 80px"
+            @change="updateValues()"
           ></v-text-field>
         </template>
       </v-slider>
       <v-slider
-        v-model="timestamp"
+        v-model="tempTimestamp"
         :max="maxTimestamp"
         label="timestamp"
         class="align-center"
+        @end="updateValues()"
       >
         <template v-slot:append>
           <v-text-field
-            v-model="timestamp"
+            v-model="tempTimestamp"
             type="number"
             style="width: 60px"
+            @change="updateValues()"
           ></v-text-field>
         </template>
       </v-slider>
 
       <v-slider
-        v-model="depth"
+        v-model="tempDepth"
         :max="maxDepth"
         label="depth"
         class="align-center"
+        @end="updateValues()"
       >
         <template v-slot:append>
           <v-text-field
-            v-model="depth"
+            v-model="tempDepth"
             type="number"
             style="width: 60px"
+            @change="updateValues()"
           ></v-text-field>
         </template>
       </v-slider>
@@ -110,7 +116,12 @@ export default {
     step: 10,
     timer: null,
     icon: "mdi-play",
-    colormapUrl: ''
+    colormapUrl: '',
+
+    tempMin: Number(),
+    tempMax: Number(),
+    tempTimestamp: Number(),
+    tempDepth: Number(),
   }),
   computed: {
     ...mapState(["maxTimestamp", "variables", "colormaps", "maxDepth"]),
@@ -121,8 +132,8 @@ export default {
   },
   watch: {
     variable: function() { 
-      this.min = this.variable.vmin;
-      this.max = this.variable.vmax;
+      this.tempMin = this.variable.vmin;
+      this.tempMax = this.variable.vmax;
       if (this.variable.name == 'velocity') {
         this.colormap = 'seismic'
       } 
@@ -136,6 +147,7 @@ export default {
         this.colormap = 'viridis'
       }
       this.updateColormapUrl();
+      this.updateValues();
     },
     min() {
       this.updateColormapUrl();
@@ -148,23 +160,32 @@ export default {
     }
   },
   methods: {
+    updateValues() {
+      this.min = this.tempMin;
+      this.max = this.tempMax;
+      this.depth = this.tempDepth;
+      this.timestamp = this.tempTimestamp;
+    },
     updateColormapUrl() {
       this.colormapUrl = process.env.VUE_APP_SERVICE_URL + `/api/colormap?vmin=${this.min}&vmax=${this.max}&colormap=${this.colormap}`;
     },
     increaseTimestamp() {
-      if (Number(this.timestamp) + Number(this.step) <= this.maxTimestamp) {
-        this.timestamp = Number(this.timestamp) + Number(this.step);
+      if (Number(this.tempTimestamp) + Number(this.step) <= this.maxTimestamp) {
+        this.tempTimestamp = Number(this.tempTimestamp) + Number(this.step);
       } else {
-        this.timestamp = this.maxTimestamp;
+        this.tempTimestamp = this.maxTimestamp;
       }
+      this.updateValues();
     },
     decreaseTimestamp() {
-      if (Number(this.timestamp) - Number(parseInt(this.step)) >= 0) {
-        this.timestamp = Number(this.timestamp) - Number(this.step);
+      if (Number(this.tempTimestamp) - Number(parseInt(this.step)) >= 0) {
+        this.tempTimestamp = Number(this.tempTimestamp) - Number(this.step);
       } else {
-        this.timestamp = 0;
+        this.timestempTimestamptamp = 0;
       }
+      this.updateValues();
     },
+    /*
     handleTimer() {
       if (this.timestamp == this.maxTimestamp) {
         this.cancelTimer();
@@ -185,6 +206,7 @@ export default {
         this.cancelTimer();
       }
     },
+    */
   },
 };
 </script>
