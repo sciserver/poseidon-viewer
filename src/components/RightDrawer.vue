@@ -18,8 +18,9 @@
         dense
         outlined
       ></v-select>
+      <v-divider style="margin: 8px 0 8px 0"/>
           {{variable.units}}<v-img contain :src="colormapUrl" />
-      <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'min'" class="align-center" @end="updateValues()">
+      <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'min ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
             v-model="tempMin"
@@ -29,7 +30,7 @@
           ></v-text-field>
         </template>
       </v-slider>
-      <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'max'" class="align-center" @end="updateValues()">
+      <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'max ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
             v-model="tempMax"
@@ -39,6 +40,7 @@
           ></v-text-field>
         </template>
       </v-slider>
+      <v-divider style="margin: 8px 0 8px 0"/>
       <v-slider
         v-model="tempTimestamp"
         :max="maxTimestamp"
@@ -56,22 +58,6 @@
         </template>
       </v-slider>
 
-      <v-slider
-        v-model="tempDepth"
-        :max="maxDepth"
-        label="depth"
-        class="align-center"
-        @end="updateValues()"
-      >
-        <template v-slot:append>
-          <v-text-field
-            v-model="tempDepth"
-            type="number"
-            style="width: 60px"
-            @change="updateValues()"
-          ></v-text-field>
-        </template>
-      </v-slider>
 
       <v-row>
         <v-col class="col-6">
@@ -96,7 +82,23 @@
           </v-row>
         </v-col>
       </v-row>
-
+      <v-divider style="margin: 16px 0 8px 0"/>
+      <v-slider
+        v-model="tempDepth"
+        :max="maxDepth"
+        label="depth"
+        class="align-center"
+        @end="updateValues()"
+      >
+        <template v-slot:append>
+          <v-text-field
+            v-model="tempDepth"
+            type="number"
+            style="width: 60px"
+            @change="updateValues()"
+          ></v-text-field>
+        </template>
+      </v-slider>
       <!--
       <v-checkbox
         v-model="showVelocity"

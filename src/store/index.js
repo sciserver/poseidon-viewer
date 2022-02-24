@@ -22,7 +22,7 @@ export default new Vuex.Store({
       {
         name: 'SST',
         label: 'Temperature',
-        vmin: -1,
+        vmin: -2,
         vmax: 30,
         units: '°C'
       },
@@ -33,6 +33,7 @@ export default new Vuex.Store({
         vmax: 2,
         units: 'm'
       },
+      /*
       {
         name: 'velocity',
         label: 'Vorticity',
@@ -40,6 +41,7 @@ export default new Vuex.Store({
         vmax: 65535,
         units: ''
       }
+      */
     ],
     colormap: 'cmo.haline',
     colormaps: ['viridis', 'plasma', 'inferno', 'magma', 'cividis', 'seismic', 'RdBu_r', 'cmo.haline'],
