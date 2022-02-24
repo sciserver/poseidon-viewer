@@ -47,6 +47,8 @@
         label="timestamp"
         class="align-center"
         @end="updateValues()"
+        style="max-height:50px"
+        hide-details="true"
       >
         <template v-slot:append>
           <v-text-field
@@ -57,18 +59,18 @@
           ></v-text-field>
         </template>
       </v-slider>
+      {{getDate(tempTimestamp)}}
 
-
-      <v-row>
-        <v-col class="col-6">
+      <v-row style="margin-top:16px">
+        <v-col class="col-12">
           <v-row align="center">
             <v-text-field
               label="step"
               v-model="step"
               type="number"
               style="max-width: 60px; margin-left: 12px; margin-right: 12px"
-            ></v-text-field>
-            <v-btn icon @click="decreaseTimestamp()">
+            ></v-text-field> hours
+            <v-btn icon @click="decreaseTimestamp()" style="margin-left: 16px">
               <v-icon>mdi-rewind</v-icon>
             </v-btn>
             <v-btn icon @click="increaseTimestamp()">
@@ -88,7 +90,9 @@
         :max="maxDepth"
         label="depth"
         class="align-center"
+        hide-details="true"
         @end="updateValues()"
+        style="max-height:50px"
       >
         <template v-slot:append>
           <v-text-field
@@ -98,7 +102,9 @@
             @change="updateValues()"
           ></v-text-field>
         </template>
+        
       </v-slider>
+      {{z_levels[tempDepth]}} m
       <!--
       <v-checkbox
         v-model="showVelocity"
@@ -126,7 +132,7 @@ export default {
     tempDepth: Number(),
   }),
   computed: {
-    ...mapState(["maxTimestamp", "variables", "colormaps", "maxDepth"]),
+    ...mapState(["maxTimestamp", "variables", "colormaps", "maxDepth","z_levels"]),
     ...mapFields(["timestamp", "depth", "variable", "colormap", "min", "max", "showVelocity"]),
   },
   mounted() {
@@ -162,6 +168,11 @@ export default {
     }
   },
   methods: {
+    getDate(h) {
+      var d = new Date(Date.parse('2012-04-25T00:00:00.000000Z'))
+      d.setHours(d.getHours()+h)
+      return d.toISOString()
+    },
     updateValues() {
       this.min = this.tempMin;
       this.max = this.tempMax;
