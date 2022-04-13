@@ -12,7 +12,7 @@ import { mapFields } from "vuex-map-fields";
 import { WindLayer } from 'ol-wind';
 import data from '../assets/wind';
 import { Modify, Select, Draw } from 'ol/interaction';
-import { Style, Stroke, Fill } from 'ol/style';
+import { Style, Stroke, Fill, Circle } from 'ol/style';
 import { defaults as defaultControls, MousePosition } from 'ol/control';
 import 'ol-ext/dist/ol-ext.css';
 import Bar from 'ol-ext/control/Bar';
@@ -33,6 +33,7 @@ export default {
       vectorLayer: null,
       toolButtons: {
         drawPolygon: null,
+        drawLine: null,
         select: null,
         delete: null,
         store: null
@@ -40,7 +41,8 @@ export default {
       interactions: {
         select: null,
         modify: null,
-        drawPolygon: null
+        drawPolygon: null,
+        drawPoint: null
       },
       geoFormat: new GeoJSON()
   }),
@@ -99,7 +101,7 @@ export default {
             }),
           }),
           this.vectorLayer = new VectorLayer({
-            source: new VectorSource(),
+            source: new VectorSource({wrapX: false}),
             style: new Style({
               fill: new Fill({
                 color: 'rgba(255, 255, 255, 0.2)',
@@ -108,6 +110,10 @@ export default {
                 color: '#FF8C00',
                 width: 2,
               }),
+              image: new Circle({
+                radius: 6,
+                fill: new Fill({color: '#FF8C00'})
+              })
             }),
             visible: true,
           }),
@@ -144,12 +150,28 @@ export default {
       this.map.addControl(controlBar);
 
       this.toolButtons.drawPolygon = new Toggle({	
-        html: '<i class="fas fa-draw-polygon"></i>',
+        html: '<i class="mdi mdi-vector-polygon"></i>',
 				onToggle: (active) => {	
           this.toggleDrawPolygon(active);
         }
       });
       controlBar.addControl(this.toolButtons.drawPolygon);
+
+      this.toolButtons.drawLine = new Toggle({	
+        html: '<i class="mdi mdi-vector-polyline"></i>',
+				onToggle: (active) => {	
+          this.toggleDrawLine(active);
+        }
+      });
+      controlBar.addControl(this.toolButtons.drawLine);
+
+      this.toolButtons.drawPoint = new Toggle({	
+        html: '<i class="mdi mdi-vector-point"></i>',
+				onToggle: (active) => {	
+          this.toggleDrawPoint(active);
+        }
+      });
+      controlBar.addControl(this.toolButtons.drawPoint);
 
       this.toolButtons.select = new Toggle({	
         html: '<i class="fas fa-hand-pointer"></i>',
@@ -187,8 +209,12 @@ export default {
 
     resetInteractions() {
       this.toolButtons.drawPolygon.setActive(false);
+      this.toolButtons.drawLine.setActive(false);
+      this.toolButtons.drawPoint.setActive(false);
       this.toolButtons.select.setActive(false);
       this.map.removeInteraction(this.interactions.drawPolygon);
+      this.map.removeInteraction(this.interactions.drawLine);
+      this.map.removeInteraction(this.interactions.drawPoint);
       this.map.removeInteraction(this.interactions.modify);
       this.map.removeInteraction(this.interactions.select);
     },
@@ -213,6 +239,54 @@ export default {
         });
 
         this.map.addInteraction(this.interactions.drawPolygon);
+        this.map.addInteraction(this.interactions.modify);
+      }
+    },
+
+    toggleDrawLine(active) {
+      if (active !== null) {
+        this.resetInteractions();
+        this.toolButtons.drawLine.setActive(active); // setting "active" property does not trigger "onToggle"
+      }
+
+      this.map.removeInteraction(this.interactions.drawLine);
+      this.map.removeInteraction(this.interactions.modify);
+
+      if (this.toolButtons.drawLine.getActive(active)) {
+        this.interactions.drawLine = new Draw({   
+          source: this.vectorLayer.getSource(),
+          type:'LineString',
+        });
+
+        this.interactions.modify = new Modify({
+          source: this.vectorLayer.getSource() 
+        });
+
+        this.map.addInteraction(this.interactions.drawLine);
+        this.map.addInteraction(this.interactions.modify);
+      }
+    },
+
+    toggleDrawPoint(active) {
+      if (active !== null) {
+        this.resetInteractions();
+        this.toolButtons.drawPoint.setActive(active); // setting "active" property does not trigger "onToggle"
+      }
+
+      this.map.removeInteraction(this.interactions.drawPoint);
+      this.map.removeInteraction(this.interactions.modify);
+
+      if (this.toolButtons.drawPoint.getActive(active)) {
+        this.interactions.drawPoint = new Draw({   
+          source: this.vectorLayer.getSource(),
+          type:'Point',
+        });
+
+        this.interactions.modify = new Modify({
+          source: this.vectorLayer.getSource() 
+        });
+
+        this.map.addInteraction(this.interactions.drawPoint);
         this.map.addInteraction(this.interactions.modify);
       }
     },

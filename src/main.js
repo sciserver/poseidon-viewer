@@ -4,6 +4,7 @@ import store from './store'
 import vuetify from './plugins/vuetify'
 import Notifications from 'vue-notification'
 import '@fortawesome/fontawesome-free/css/all.css'
+import '@mdi/font/css/materialdesignicons.css'
 
 Vue.config.productionTip = false
 Vue.use(Notifications)
