@@ -4,7 +4,7 @@
 
 <script>
 import Map from "ol/Map";
-import { Tile as TileLayer, Vector as VectorLayer } from 'ol/layer';
+import { Tile as TileLayer, Vector as VectorLayer, Graticule } from 'ol/layer';
 import { XYZ, Vector as VectorSource } from 'ol/source';
 import View from "ol/View";
 import 'ol/ol.css';
@@ -31,6 +31,7 @@ export default {
       windData: data,
       windLayer: null,
       vectorLayer: null,
+      gridLayer: null,
       toolButtons: {
         drawPolygon: null,
         drawLine: null,
@@ -47,7 +48,7 @@ export default {
       geoFormat: new GeoJSON()
   }),
   computed: {
-      ...mapFields(['timestamp', 'depth', 'variable', 'colormap', 'min', 'max', 'showVelocity'])
+      ...mapFields(['timestamp', 'depth', 'variable', 'colormap', 'min', 'max', 'showVelocity', 'showGrid'])
   },
   mounted() {
     this.init();
@@ -73,6 +74,9 @@ export default {
     },
     showVelocity() {
       this.windLayer.setVisible(this.showVelocity)
+    },
+    showGrid() {
+      this.gridLayer.setVisible(this.showGrid)
     }
   },
   methods: {
@@ -99,6 +103,17 @@ export default {
             source: new XYZ({
               url: this.getUrlTemplate(),
             }),
+          }),
+          this.gridLayer = new Graticule({
+            // the style to use for the lines, optional.
+            strokeStyle: new Stroke({
+              color: 'rgba(255,120,0,0.7)',
+              width: 2,
+              lineDash: [0.5, 4],
+            }),
+            showLabels: true,
+            //wrapX: false,
+            visible: this.showGrid
           }),
           this.vectorLayer = new VectorLayer({
             source: new VectorSource({wrapX: false}),
