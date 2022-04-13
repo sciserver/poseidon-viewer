@@ -111,6 +111,10 @@
         label="Velocity (animation demo)"
       ></v-checkbox>
       -->
+      <v-checkbox
+        v-model="showGrid"
+        label="Show grid"
+      ></v-checkbox>
     </v-form>
   </v-container>
 </template>
@@ -133,7 +137,7 @@ export default {
   }),
   computed: {
     ...mapState(["maxTimestamp", "variables", "colormaps", "maxDepth","z_levels"]),
-    ...mapFields(["timestamp", "depth", "variable", "colormap", "min", "max", "showVelocity"]),
+    ...mapFields(["timestamp", "depth", "variable", "colormap", "min", "max", "showVelocity", "showGrid"]),
   },
   mounted() {
     this.variable = this.variables[0];
