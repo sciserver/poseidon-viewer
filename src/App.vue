@@ -41,8 +41,12 @@ export default {
   },
 
   data: () => ({
-    drawerRight: true
+    drawerRight: false
   }),
+
+  mounted() {
+    setTimeout(() => { this.drawerRight = true; }, 0);
+  }
 };
 </script>
 
