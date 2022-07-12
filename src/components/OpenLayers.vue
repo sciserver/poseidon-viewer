@@ -1,11 +1,12 @@
 <template>
   <div id="map" class="map"></div>
+
 </template>
 
 <script>
 import Map from "ol/Map";
 import { Tile as TileLayer, Vector as VectorLayer, Graticule } from 'ol/layer';
-import { XYZ, Vector as VectorSource } from 'ol/source';
+import { XYZ, TileDebug, Vector as VectorSource } from 'ol/source';
 import View from "ol/View";
 import 'ol/ol.css';
 import { mapFields } from "vuex-map-fields";
@@ -23,7 +24,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import { copyTextToClipboard } from '../clipboard.js';
 import { format as coordinateFormat } from 'ol/coordinate';
 import axios from 'axios';
-
+import Overlay from 'ol/Overlay';
+import {toLonLat} from 'ol/proj';
+import {toStringHDMS} from 'ol/coordinate';
 export default {
   data: () => ({
       map: null,
@@ -32,6 +35,9 @@ export default {
       windLayer: null,
       vectorLayer: null,
       gridLayer: null,
+      overlay: null,
+      content: null,
+      overlayEnabled: true,
       toolButtons: {
         drawPolygon: null,
         drawLine: null,
@@ -95,7 +101,26 @@ export default {
         className: 'custom-mouse-position',
         undefinedHTML: '&nbsp;'
       });
+      const container = document.getElementById('popup');
+      this.content = document.getElementById('popup-content');
+      console.log(this.content)
+      const closer = document.getElementById('popup-closer');
+      const that = this
+      closer.onclick = function () {
+        that.overlay.setPosition(undefined);
+        closer.blur();
+        return false;
+      };
+      this.overlay = new Overlay({
+        element: container,
+        autoPan: {
+          animation: {
+            duration: 250,
+          },
+        },
+      });
       this.map = new Map({
+        overlays: [this.overlay],
         controls: defaultControls().extend([ mousePositionControl ]),
         target: "map",
         layers: [
@@ -103,6 +128,7 @@ export default {
             source: new XYZ({
               url: this.getUrlTemplate(),
             }),
+            // visible: false
           }),
           this.gridLayer = new Graticule({
             // the style to use for the lines, optional.
@@ -132,6 +158,10 @@ export default {
             }),
             visible: true,
           }),
+          this.debugLayer = new TileLayer({
+            source: new TileDebug(),
+            visible: false
+          }),
         ],
         view: new View({
           center: [0, 0],
@@ -157,6 +187,51 @@ export default {
       });
 
       this.map.addLayer(this.windLayer);
+
+
+      this.map.on('singleclick', function (event) {
+        if (that.overlayEnabled) {
+          const coordinate = event.coordinate;
+          const hdms = toStringHDMS(toLonLat(coordinate));
+
+          //that.content.innerHTML = '<p>You clicked here:</p><code>' + hdms + '</code>';
+          //that.overlay.setPosition(coordinate);
+
+          const grid = that.layer.getSource().getTileGrid();
+          const tileCord = grid.getTileCoordForCoordAndZ(event.coordinate, Math.floor(that.map.getView().getZoom()));
+          const extent = that.layer.getSource().getTileGrid().getTileCoordExtent(tileCord);
+          const a = event.coordinate[0] - extent[0]
+          const b = - event.coordinate[1] + extent[3]
+          const st = that.layer.getSource().getTileGrid().getTileSize()
+          const se = extent[2] - extent[0]
+
+          let newX = tileCord[1] % Math.pow(2, tileCord[0])
+          if (newX < 0) {
+            newX = Math.pow(2, tileCord[0]) + newX;
+          } 
+          axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
+          .then(function(response) {
+              that.content.innerHTML = '<code>' + hdms + '</code></br><code>'+response.data.value+'</code>';
+              that.overlay.setPosition(coordinate);
+              console.log(response.data)
+          })
+        }
+      });
+
+      this.map.on('click', function(event) {
+        const grid = that.layer.getSource().getTileGrid();
+        const tileCord = grid.getTileCoordForCoordAndZ(event.coordinate, Math.floor(that.map.getView().getZoom()));
+        const extent = that.layer.getSource().getTileGrid().getTileCoordExtent(tileCord);
+        console.log('clicked ', event.coordinate[0], event.coordinate[1]);
+        console.log('tile z,x,y is:', tileCord[0], tileCord[1], tileCord[2]);
+        const a = event.coordinate[0] - extent[0]
+        const b = - event.coordinate[1] + extent[3]
+        const st = that.layer.getSource().getTileGrid().getTileSize()
+        const se = extent[2] - extent[0]
+        console.log([a/se*st,b/se*st])
+
+      console.log(extent)
+      });
 
     },
 
@@ -232,6 +307,7 @@ export default {
       this.map.removeInteraction(this.interactions.drawPoint);
       this.map.removeInteraction(this.interactions.modify);
       this.map.removeInteraction(this.interactions.select);
+      this.overlayEnabled = true;
     },
 
     toggleDrawPolygon(active) {
@@ -244,6 +320,7 @@ export default {
       this.map.removeInteraction(this.interactions.modify);
 
       if (this.toolButtons.drawPolygon.getActive(active)) {
+        this.overlayEnabled = false;
         this.interactions.drawPolygon = new Draw({   
           source: this.vectorLayer.getSource(),
           type:'Polygon',
@@ -268,6 +345,7 @@ export default {
       this.map.removeInteraction(this.interactions.modify);
 
       if (this.toolButtons.drawLine.getActive(active)) {
+        this.overlayEnabled = false;
         this.interactions.drawLine = new Draw({   
           source: this.vectorLayer.getSource(),
           type:'LineString',
@@ -292,6 +370,7 @@ export default {
       this.map.removeInteraction(this.interactions.modify);
 
       if (this.toolButtons.drawPoint.getActive(active)) {
+        this.overlayEnabled = false;
         this.interactions.drawPoint = new Draw({   
           source: this.vectorLayer.getSource(),
           type:'Point',
@@ -313,6 +392,7 @@ export default {
       }
 
       if (this.toolButtons.select.getActive(active)) {
+        this.overlayEnabled = false;
         this.interactions.select = new Select({
           layers: [this.vectorLayer]
         });
@@ -376,4 +456,6 @@ export default {
   padding-right: 4px;
   color: #FF8C00;
 }
+
+
 </style>
