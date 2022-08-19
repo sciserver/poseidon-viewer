@@ -213,26 +213,27 @@ export default {
           .then(function(response) {
               that.content.innerHTML = '<code>' + hdms + '</code></br><code>'+response.data.value+'</code>';
               that.overlay.setPosition(coordinate);
-              console.log(response.data)
+              //console.log(response.data)
           })
         }
       });
 
+      /*
       this.map.on('click', function(event) {
         const grid = that.layer.getSource().getTileGrid();
         const tileCord = grid.getTileCoordForCoordAndZ(event.coordinate, Math.floor(that.map.getView().getZoom()));
         const extent = that.layer.getSource().getTileGrid().getTileCoordExtent(tileCord);
-        console.log('clicked ', event.coordinate[0], event.coordinate[1]);
-        console.log('tile z,x,y is:', tileCord[0], tileCord[1], tileCord[2]);
+        //console.log('clicked ', event.coordinate[0], event.coordinate[1]);
+        //console.log('tile z,x,y is:', tileCord[0], tileCord[1], tileCord[2]);
         const a = event.coordinate[0] - extent[0]
         const b = - event.coordinate[1] + extent[3]
         const st = that.layer.getSource().getTileGrid().getTileSize()
         const se = extent[2] - extent[0]
-        console.log([a/se*st,b/se*st])
+        //console.log([a/se*st,b/se*st])
 
-      console.log(extent)
+        //console.log(extent)
       });
-
+      */
     },
 
     addToolBar() {
