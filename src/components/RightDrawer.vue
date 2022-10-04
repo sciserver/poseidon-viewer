@@ -20,21 +20,23 @@
       ></v-select>
       <v-divider style="margin: 8px 0 8px 0"/>
           {{variable.units}}<v-img contain :src="colormapUrl" />
-      <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'min ['+variable.units+']'" class="align-center" @end="updateValues()">
+      <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'min ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
             v-model="tempMin"
             type="number"
+            :step="variable.step"
             style="width: 80px"
             @change="updateValues()"
           ></v-text-field>
         </template>
       </v-slider>
-      <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="(variable.vmax-variable.vmin)/100.0" :label="'max ['+variable.units+']'" class="align-center" @end="updateValues()">
+      <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'max ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
             v-model="tempMax"
             type="number"
+            :step="variable.step"
             style="width: 80px"
             @change="updateValues()"
           ></v-text-field>
