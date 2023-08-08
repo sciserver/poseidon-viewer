@@ -54,7 +54,7 @@ export default {
       geoFormat: new GeoJSON()
   }),
   computed: {
-      ...mapFields(['timestamp', 'depth', 'variable', 'colormap', 'min', 'max', 'showVelocity', 'showGrid'])
+      ...mapFields(['timestamp', 'timestamp2','depth', 'variable', 'colormap', 'min', 'max', 'showVelocity', 'showGrid'])
   },
   mounted() {
     this.init();
@@ -86,6 +86,11 @@ export default {
     }
   },
   methods: {
+    getDate(h) {
+      var d = new Date(Date.parse('2012-04-25T00:00:00.000000Z'))
+      d.setHours(d.getHours()+h)
+      return d.toISOString()
+    },
     getUrlTemplate() {
         return process.env.VUE_APP_SERVICE_URL + `/api/values/${this.variable.name}/${this.timestamp.toString().padStart(4,'0')}/{z}/{x}/{y}/${this.depth}?colormap=${this.colormap}&min=${this.min}&max=${this.max}`;
     },
@@ -407,13 +412,24 @@ export default {
     },
 
     exportSelected() {
-      let obj = [];
-      this.interactions.select.getFeatures().forEach((f) => obj.push(JSON.parse(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326')))));
+      let obj =  
+      { 
+        type: "FeatureCollection",
+        features: []
+      };
+      this.interactions.select.getFeatures().forEach((f) => obj.features.push({
+        type: "Feature",
+        properties: {
+          timeFrom: this.getDate(this.timestamp),
+          timeTo: this.getDate(this.timestamp2)
+        },
+        geometry: JSON.parse(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326')))
+      }));
       copyTextToClipboard(JSON.stringify(obj));
     },
 
     storeSelected() {
-      let obj = [];
+      let obj = []
       this.interactions.select.getFeatures().forEach((f) => obj.push(JSON.parse(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326')))));
       axios.post(process.env.VUE_APP_SERVICE_URL + '/api/shapes', obj)
           .then(() => {
