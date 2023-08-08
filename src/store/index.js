@@ -17,6 +17,7 @@ export default new Vuex.Store({
         label: 'Salinity',
         vmin: 30,
         vmax: 37,
+        step: 0.1,
         units: 'PSU'
       },
       {
@@ -24,6 +25,7 @@ export default new Vuex.Store({
         label: 'Temperature',
         vmin: -2,
         vmax: 30,
+        step: 0.1,
         units: '°C'
       },
       {
@@ -31,6 +33,7 @@ export default new Vuex.Store({
         label: 'Surface height anomaly',
         vmin: -2,
         vmax: 2,
+        step: 0.05,
         units: 'm'
       },
       /*
