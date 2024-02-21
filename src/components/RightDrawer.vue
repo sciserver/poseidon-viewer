@@ -43,7 +43,7 @@
         </template>
       </v-slider>
       <v-divider style="margin: 8px 0 8px 0"/>
-      <v-slider
+      <v-range-slider
         v-model="tempTimestamp"
         :max="maxTimestamp"
         label="timestamp"
@@ -54,14 +54,21 @@
       >
         <template v-slot:append>
           <v-text-field
-            v-model="tempTimestamp"
+            :value="tempTimestamp[0]"
+            type="number"
+            style="width: 60px"
+            @change="updateValues()"
+          ></v-text-field>
+          <v-text-field
+            :value="tempTimestamp[1]"
             type="number"
             style="width: 60px"
             @change="updateValues()"
           ></v-text-field>
         </template>
-      </v-slider>
-      {{getDate(tempTimestamp)}}
+      </v-range-slider>
+      {{getDate(tempTimestamp[0])}} 
+      {{getDate(tempTimestamp[1])}}
 
       <v-row style="margin-top:16px">
         <v-col class="col-12">
@@ -134,20 +141,21 @@ export default {
 
     tempMin: Number(),
     tempMax: Number(),
-    tempTimestamp: Number(),
+    tempTimestamp: [0,0],
     tempDepth: Number(),
   }),
   computed: {
     ...mapState(["maxTimestamp", "variables", "colormaps", "maxDepth","z_levels"]),
-    ...mapFields(["timestamp", "depth", "variable", "colormap", "min", "max", "showVelocity", "showGrid"]),
+    ...mapFields(["timestamp","timestamp2", "depth", "variable", "colormap", "min", "max", "showVelocity", "showGrid"]),
   },
   mounted() {
     this.variable = this.variables[0];
+    this.tempTimestamp = [0, this.maxTimestamp];
   },
   watch: {
     variable: function() { 
-      this.tempMin = this.variable.vmin;
-      this.tempMax = this.variable.vmax;
+      this.tempMin = this.variable.defaultMin ?? this.variable.vmin;
+      this.tempMax = this.variable.defaultMax ?? this.variable.vmax;
       if (this.variable.name == 'velocity') {
         this.colormap = 'seismic'
       } 
@@ -183,24 +191,26 @@ export default {
       this.min = this.tempMin;
       this.max = this.tempMax;
       this.depth = this.tempDepth;
-      this.timestamp = this.tempTimestamp;
+      this.timestamp = this.tempTimestamp[0];
+      this.timestamp2 = this.tempTimestamp[1];
     },
     updateColormapUrl() {
       this.colormapUrl = process.env.VUE_APP_SERVICE_URL + `/api/colormap?vmin=${this.min}&vmax=${this.max}&colormap=${this.colormap}`;
     },
     increaseTimestamp() {
-      if (Number(this.tempTimestamp) + Number(this.step) <= this.maxTimestamp) {
-        this.tempTimestamp = Number(this.tempTimestamp) + Number(this.step);
+      if (Number(this.tempTimestamp[0]) + Number(this.step) <= this.maxTimestamp) {
+        //this.tempTimestamp[0] = Number(this.tempTimestamp[0]) + Number(this.step);
+        this.$set(this.tempTimestamp,0,Number(this.tempTimestamp[0]) + Number(this.step));
       } else {
-        this.tempTimestamp = this.maxTimestamp;
+        this.$set(this.tempTimestamp,0,this.maxTimestamp);
       }
       this.updateValues();
     },
     decreaseTimestamp() {
-      if (Number(this.tempTimestamp) - Number(parseInt(this.step)) >= 0) {
-        this.tempTimestamp = Number(this.tempTimestamp) - Number(this.step);
+      if (Number(this.tempTimestamp[0]) - Number(parseInt(this.step)) >= 0) {
+        this.$set(this.tempTimestamp,0,Number(this.tempTimestamp[0]) - Number(this.step));
       } else {
-        this.timestempTimestamptamp = 0;
+        this.$set(this.tempTimestamp,0,0);
       }
       this.updateValues();
     },

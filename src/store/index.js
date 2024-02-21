@@ -7,6 +7,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     timestamp: 0,
+    timestamp2: 239,
     maxTimestamp: 239,
     depth: 0,
     maxDepth: 89,
@@ -36,15 +37,16 @@ export default new Vuex.Store({
         step: 0.05,
         units: 'm'
       },
-      /*
       {
         name: 'velocity',
         label: 'Vorticity',
-        vmin: 0,
-        vmax: 65535,
-        units: ''
+        vmin: -0.005,
+        defaultMin: -0.002,
+        vmax: 0.005,
+        defaultMax: 0.002,
+        step: 0.0001,
+        units: '1/s'
       }
-      */
     ],
     colormap: 'cmo.haline',
     colormaps: ['viridis', 'plasma', 'inferno', 'magma', 'cividis', 'seismic', 'RdBu_r', 'cmo.haline'],
