@@ -429,8 +429,19 @@ export default {
     },
 
     storeSelected() {
-      let obj = []
-      this.interactions.select.getFeatures().forEach((f) => obj.push(JSON.parse(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326')))));
+      let obj =  
+      { 
+        type: "FeatureCollection",
+        features: []
+      };
+      this.interactions.select.getFeatures().forEach((f) => obj.features.push({
+        type: "Feature",
+        properties: {
+          timeFrom: this.getDate(this.timestamp),
+          timeTo: this.getDate(this.timestamp2)
+        },
+        geometry: JSON.parse(this.geoFormat.writeGeometry(f.getGeometry().clone().transform('EPSG:3857', 'EPSG:4326')))
+      }));
       axios.post(process.env.VUE_APP_SERVICE_URL + '/api/shapes', obj)
           .then(() => {
             this.$notify({
