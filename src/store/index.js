@@ -6,6 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    drawerRight: true,
     timestamp: 0,
     timestamp2: 239,
     maxTimestamp: 239,
