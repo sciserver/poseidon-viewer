@@ -35,6 +35,7 @@
 <script>
 import OpenLayers from './components/OpenLayers';
 import RightDrawer from './components/RightDrawer';
+import { mapFields } from "vuex-map-fields";
 
 export default {
   name: 'App',
@@ -45,8 +46,11 @@ export default {
   },
 
   data: () => ({
-    drawerRight: false
   }),
+
+  computed: {
+      ...mapFields(['drawerRight'])
+  },
 
   mounted() {
     setTimeout(() => { this.drawerRight = true; }, 0);

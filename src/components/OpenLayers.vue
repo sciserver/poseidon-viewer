@@ -43,7 +43,8 @@ export default {
         drawLine: null,
         select: null,
         delete: null,
-        store: null
+        store: null,
+        drawer: null
       },
       interactions: {
         select: null,
@@ -54,7 +55,7 @@ export default {
       geoFormat: new GeoJSON()
   }),
   computed: {
-      ...mapFields(['timestamp', 'timestamp2','depth', 'variable', 'colormap', 'min', 'max', 'showVelocity', 'showGrid'])
+      ...mapFields(['timestamp', 'timestamp2','depth', 'variable', 'colormap', 'min', 'max', 'showVelocity', 'showGrid', 'drawerRight'])
   },
   mounted() {
     this.init();
@@ -300,6 +301,14 @@ export default {
         },
       });
       controlBar.addControl(this.toolButtons.store);
+
+      this.toolButtons.drawer = new Button({
+        html: '<i class="mdi mdi-menu"></i>',
+        handleClick: () => {	
+          this.drawerRight = !this.drawerRight;
+        },
+      });
+      controlBar.addControl(this.toolButtons.drawer);
 
     },
 
