@@ -1,5 +1,6 @@
 import numpy as np
 import seaduck as sd
+import copy
 
 # def buildWSG84Grid(M):
 #     scales = [2**i for i in range(7)]
@@ -53,8 +54,8 @@ def find_diagnal_index_with_face_vectorized(face,iy,ix,tp,xoffset = 1,yoffset = 
     Finding the diagnal one involve moving in two directions,
     which is not always straightforward when there is face
     """
-    nface,niy,nix = (face,iy+yoffset,ix+offset)#naively
-    redo = np.where(tp.check_illegal(nface,niy,nix),cuvwg = 'G')
+    nface,niy,nix = (face,iy+yoffset,ix+xoffset)#naively
+    redo = np.where(tp.check_illegal((nface,niy,nix),cuvwg = 'G'))[0]
     for j in redo:
         nface[j],niy[j],nix[j] = tp.ind_moves(
             (face[j],iy[j],ix[j]),
@@ -80,16 +81,17 @@ def sd_position_from_latlon(lat,lon,ocedata):
     """
     pt = sd.Position()
     pt = pt.from_latlon(x=lon, y=lat, data=ocedata)
+    tp = ocedata.tp
     
     pt.fcg = copy.deepcopy(pt.face)
     pt.iyg = copy.deepcopy(pt.iy)
     pt.ixg = copy.deepcopy(pt.ix)
     pt.ryg = pt.ry+0.5
     pt.rxg = pt.rx+0.5
-    # lower_left = np.where(pt.rx>0,pt.ry<0)
+    # lower_left = np.where(np.logical_and(pt.rx>0,pt.ry<0))
     # points in the lower_left is already taken care of
     
-    upper_righ = np.where(pt.rx>0,pt.ry>0)
+    upper_righ = np.where(np.logical_and(pt.rx>0,pt.ry>0))
     (
         pt.fcg[upper_righ],
         pt.iyg[upper_righ],
@@ -103,7 +105,7 @@ def sd_position_from_latlon(lat,lon,ocedata):
     pt.rxg[upper_righ] = pt.rx[upper_righ]-0.5
     pt.ryg[upper_righ] = pt.ry[upper_righ]-0.5
     
-    upper_left = np.where(pt.rx<0,pt.ry>0)
+    upper_left = np.where(np.logical_and(pt.rx<0,pt.ry>0))
     (
         pt.fcg[upper_left],
         pt.iyg[upper_left],
@@ -112,11 +114,11 @@ def sd_position_from_latlon(lat,lon,ocedata):
         pt.fcg[upper_left],
         pt.iyg[upper_left],
         pt.iyg[upper_left]),
-        0*np.ones_like(pt.ix),cuvwg = 'G'
+        0*np.ones(len(upper_left),int),cuvwg = 'G'
     )
-    pt.rxg[upper_left] = pt.rx[upper_left]-0.5
+    pt.ryg[upper_left] = pt.ry[upper_left]-0.5
     
-    lower_righ = np.where(pt.rx>0,pt.ry<0)
+    lower_righ = np.where(np.logical_and(pt.rx>0,pt.ry<0))
     (
         pt.fcg[lower_righ],
         pt.iyg[lower_righ],
@@ -125,8 +127,7 @@ def sd_position_from_latlon(lat,lon,ocedata):
         pt.fcg[lower_righ],
         pt.iyg[lower_righ],
         pt.iyg[lower_righ]),
-        3*np.ones_like(pt.ix),cuvwg = 'G'
+        3*np.ones(len(upper_left),int),cuvwg = 'G'
     )
-    pt.ryg[lower_righ] = pt.ry[upper_righ]-0.5
+    pt.rxg[lower_righ] = pt.rx[upper_righ]-0.5
     return pt
-
