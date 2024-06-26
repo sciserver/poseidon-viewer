@@ -37,10 +37,12 @@ def lonlat4global_map(zoom,j,i,resolution = 256):
     lon,lat: np.ndarray
         2D arrays of longitude and latitude
     """
-    n_zoom = 2**zoom
+    n_zoom = resolution*(2**zoom)
     rescale = 2*np.pi/n_zoom
     x = (np.arange(i*resolution,(i+1)*resolution)+0.5)*rescale
     y = (np.arange(j*resolution,(j+1)*resolution)+0.5)*rescale
+    assert (x<2*np.pi).all()
+    assert (x>0).all()
     lon = np.rad2deg(x- np.pi)
     lat = np.rad2deg(2*(np.arctan(np.exp(np.pi - y))- np.pi/4))
     return np.meshgrid(lon,lat)
