@@ -12,20 +12,21 @@ import lmdb
 import cmocean
 import fsspec
 
-combined_velocities = 'file:///srv/kerchunk/combined_velocities.json'
-combined_scalars = 'file:///srv/kerchunk/combined_scalars.json'
-fs_s = fsspec.filesystem('reference', fo=combined_scalars)
-fs_v = fsspec.filesystem('reference', fo=combined_velocities)
-mapper_v = fs_v.get_mapper('')
-mapper_s = fs_s.get_mapper('')
+# combined_velocities = 'file:///srv/kerchunk/combined_velocities.json'
+# combined_scalars = 'file:///srv/kerchunk/combined_scalars.json'
+# fs_s = fsspec.filesystem('reference', fo=combined_scalars)
+# fs_v = fsspec.filesystem('reference', fo=combined_velocities)
+# mapper_v = fs_v.get_mapper('')
+# mapper_s = fs_s.get_mapper('')
 
-prefix = '/api/values/'
-dataset = zarr.open(mapper_s, mode='r')
-#dataset = zarr.open('/srv/poseidon/data02_01/LLC4320/2D/SS0', mode='r')
-#datasetV = zarr.open('/srv/velocity', mode='r')
-datasetV = zarr.open(mapper_v, mode='r')
-interpolators_path = '/srv/TileInterpolators'
-env = lmdb.open(interpolators_path)
+# prefix = '/api/values/'
+# dataset = zarr.open(mapper_s, mode='r')
+# #dataset = zarr.open('/srv/poseidon/data02_01/LLC4320/2D/SS0', mode='r')
+# #datasetV = zarr.open('/srv/velocity', mode='r')
+# datasetV = zarr.open(mapper_v, mode='r')
+# interpolators_path = '/srv/TileInterpolators'
+interpolators_path = '/home/idies/workspace/poseidon/data01_01/poseidon_viewer/TileInterpolators-20221101'
+env = lmdb.open(interpolators_path,readonly = True)
 
 value = '[]'.encode()
 
@@ -420,20 +421,24 @@ class ValuesRequestHandler:
         res.data = ('{"value":'+ str(tile[tile_y, tile_x]) +'}').encode()
 
 
-app = falcon.App(cors_enable=True)
-app.add_sink(TileRequestHandler().on_get, prefix)
-#app.add_sink(InterpolatorRequestHandler().on_get, '/api/interpolators/')
-app.add_static_route('/viewer', os.path.abspath('./dist'))
-app.add_route('/api/colormap', ColorMapRequestHandler())
-app.add_route('/api/shapes', ShapesRequestHandler())
-app.add_sink(ValuesRequestHandler().on_get, '/api/val/')
+# app = falcon.App(cors_enable=True)
+# app.add_sink(TileRequestHandler().on_get, prefix)
+# #app.add_sink(InterpolatorRequestHandler().on_get, '/api/interpolators/')
+# app.add_static_route('/viewer', os.path.abspath('./dist'))
+# app.add_route('/api/colormap', ColorMapRequestHandler())
+# app.add_route('/api/shapes', ShapesRequestHandler())
+# app.add_sink(ValuesRequestHandler().on_get, '/api/val/')
 
 class CustomWSGIRequestHandler(WSGIRequestHandler):
     def log_message(self, format, *args):
         pass
 
 if __name__ == '__main__':
-    port = 8000
-    with make_server('', port, app, handler_class=CustomWSGIRequestHandler) as httpd:
-        print('Serving on port {}...'.format(port))
-        httpd.serve_forever()
+    with env.begin(write=False) as txn:
+        z,x,y = 0,0,0
+        key='{}/{}/{}'.format(z, x, y)
+        interpolator = pickle.loads(txn.get(key.encode()))
+    # port = 8000
+    # with make_server('', port, app, handler_class=CustomWSGIRequestHandler) as httpd:
+    #     print('Serving on port {}...'.format(port))
+    #     httpd.serve_forever()
