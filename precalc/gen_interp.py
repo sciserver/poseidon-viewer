@@ -19,6 +19,22 @@ import copy
     
 #     return px,py
 
+scalar_kernel = np.array([
+    [0,0],
+    [-1,0],
+    [0,-1],
+    [-1,-1]
+])
+vortv_kernel = np.array([
+    [0,0],
+    [-1,0],
+])
+vortu_kernel = np.array([
+    [0,0],
+    [0,-1],
+])
+scalar_knw = sd.KnW(scalar_kernel,inheritance = None)
+
 def lonlat4global_map(zoom,j,i,resolution = 256):
     """Create lat lon points for a subdomain (rendering unit)
     
@@ -131,3 +147,41 @@ def sd_position_from_latlon(lat,lon,ocedata):
     )
     pt.rxg[lower_righ] = pt.rx[upper_righ]-0.5
     return pt
+
+def calc_scalar_weight(pt):
+    """Thin wrapper aroung sd.utils.weight_f_node
+    """
+    return sd.utils.weight_f_node(pt.rxg,pt.ryg)
+
+def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
+    """Find the indexes to read for the particles
+    
+    Parameters
+    ----------
+    pt: sd.Position
+        The particle location object
+    scalar_knw: sd.KnW
+        The kernel object that determines the neighbor points to read. 
+        
+    Returns
+    -------
+    uni_ind: np.ndarray
+        A 2D array containing all the indices to read
+    inverse: np.ndarray
+        Unravel the data to construct the interpolation
+    """
+    # Hack the particle object a bit
+    pt.face = pt.fcg
+    pt.iy = pt.iyg
+    pt.ix = pt.ixg
+    nface,niy,nix = pt._fatten_h(scalar_knw)
+    ind_shape = nix.shape
+    if nface is not None:
+        inds = (nface.ravel(),niy.revel(),nix.revel())
+    else:
+        inds = (niy.revel(),nix.revel())
+    inds = np.column_stack(inds)
+    uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
+    inverse = inverse.reshape(ind_shape)
+    return uni_ind, inverse
+        
