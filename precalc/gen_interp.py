@@ -184,4 +184,10 @@ def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
     inverse = inverse.reshape(ind_shape)
     return uni_ind, inverse
-        
+
+def read_data(data,uni_ind):
+    to_read = tuple(uni_ind[...,i] for i in range(uni_ind.shape[-1]))
+    if isinstance(data,zarr.core.Array):
+        return data.get_coordinate_selection(to_read)
+    else:
+        return sd.smart_read.smart_read(data,to_read)
