@@ -32,6 +32,21 @@ def test_find_diagnal_index_with_face_vectorized(od,face,iy,ix,ans):
     res = tuple(i[0] for i in res)
     assert res==ans
     
+@pytest.mark.parametrize("od",["ecco"], indirect = True)
+@pytest.mark.parametrize(
+    "face,iy,ix,ans",
+    [
+        (np.array([9,11]),np.array([0,2]),np.array([88,0]),
+        np.array([[ 3, 10],[ 2,  1],[89, 89]]))
+    ]
+)
+def test_find_diagnal_index_intervene(od,face,iy,ix,ans):
+    tp = od.tp
+    res = find_diagnal_index_with_face_vectorized(face,iy,ix,tp,
+                                                  xoffset = -1,yoffset = -1,
+                                                  moves = [1,2],cuvwg = 'C')
+    res = np.array(res)
+    assert np.allclose(res,ans)
     
 @pytest.mark.parametrize("od",["ecco"], indirect = True)
 def test_create_position(od):

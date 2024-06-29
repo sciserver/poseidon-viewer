@@ -1,7 +1,8 @@
 import pytest
 from precalc.grid_subsample import (
     subsample_cguv,
-    convert_back
+    convert_back,
+    create_xgyg
 )
 
 @pytest.mark.parametrize("shape",[90,4320])
@@ -30,3 +31,10 @@ def test_convert_back(ind,grain,c_or_g):
     else:
         use = xg
     assert use[ind]==old_ind
+    
+@pytest.mark.parametrize("od",["ecco"], indirect = True)
+@pytest.mark.parametrize("grain",[2,5,45])
+def test_create_xgyg(grain,od):
+    xg,yg = create_xgyg(grain,od)
+    size_should = 90/grain
+    assert (13,size_should,size_should) == xg.shape

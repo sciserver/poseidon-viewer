@@ -64,19 +64,23 @@ def lonlat4global_map(zoom,j,i,resolution = 256):
     lat = np.rad2deg(2*(np.arctan(np.exp(np.pi - y))- np.pi/4))
     return np.meshgrid(lon,lat)
 
-def find_diagnal_index_with_face_vectorized(face,iy,ix,tp,xoffset = 1,yoffset = 1,moves = [0,3]):
+def find_diagnal_index_with_face_vectorized(face,iy,ix,tp,xoffset = 1,yoffset = 1,moves = [0,3],cuvwg = 'G'):
     """Find the index for dataset with face connection
     
     Finding the diagnal one involve moving in two directions,
     which is not always straightforward when there is face
     """
-    nface,niy,nix = (face,iy+yoffset,ix+xoffset)#naively
-    redo = np.where(tp.check_illegal((nface,niy,nix),cuvwg = 'G'))[0]
+    nface,niy,nix = (copy.deepcopy(face),iy+yoffset,ix+xoffset)#naively
+    redo = np.where(tp.check_illegal((nface,niy,nix),cuvwg = cuvwg))[0]
     for j in redo:
-        nface[j],niy[j],nix[j] = tp.ind_moves(
-            (face[j],iy[j],ix[j]),
-            moves,cuvwg = 'G'
-        )
+        singleuse_moves = copy.deepcopy(moves)
+        try:
+            nface[j],niy[j],nix[j] = tp.ind_moves(
+                (face[j],iy[j],ix[j]),
+                singleuse_moves,cuvwg = cuvwg
+            )
+        except IndexError:
+            nface[j],niy[j],nix[j] = -1,-1,-1
     return nface,niy,nix
 
 def sd_position_from_latlon(lat,lon,ocedata):

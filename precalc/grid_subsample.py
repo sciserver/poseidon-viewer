@@ -24,11 +24,11 @@ def subsample_cguv(shape,grain,gshape = None,return_slice = True):
             "The data size is not divisible by the grain size, "
             "could lead to weird result"
                     )
-    xc_start = np.ceil(grain/2)-1
+    xc_start = int(np.ceil(grain/2)-1)
     if return_slice:
         return slice(xc_start, shape, grain),slice(0, gshape, grain)
     else:
-        returdn np.arange(xc_start, shape, grain),np.arange(0, gshape, grain)
+        return np.arange(xc_start, shape, grain),np.arange(0, gshape, grain)
 
 def convert_back(ind,grain,c_or_g = 'c'):
     if c_or_g == 'c':
@@ -36,9 +36,14 @@ def convert_back(ind,grain,c_or_g = 'c'):
     else:
         xc_start = 0
         
-    return xc_start+ind*grain
+    return int(xc_start+ind*grain)
 
-def create_xgyg(grain,xc,yc,xg,yg,tp = None):
+def create_xgyg(grain,oce):
+    xc = oce.XC
+    yc = oce.YC
+    xg = oce.XG
+    yg = oce.YG
+    tp = oce.tp
     cshape = xc.shape
     gshape = xg.shape
     if grain%2!=0:
@@ -50,28 +55,31 @@ def create_xgyg(grain,xc,yc,xg,yg,tp = None):
         iyc,iyg = subsample_cguv(cshape[-2],grain,gshape = gshape[-2],return_slice = False)
         if len(cshape)==3:
             # There is a face dimension
-            face = np.arange(cshape[0])
-            face,iyg,ixg = np.meshgrid(face,iyg,ixg)
+            face = np.arange(cshape[0]).astype(int)
+            face,iyg,ixg = np.meshgrid(face,iyg,ixg,indexing = 'ij')
             the_shape = iyg.shape
-            face,iyg,ixg = tuple(i.ravel() for i in [face,iyg,ixg])
+            face,iyg,ixg = tuple(i.ravel().astype(int) for i in [face,iyg,ixg])
             nfc,niy,nix = find_diagnal_index_with_face_vectorized(
                 face,iyg,ixg,tp,xoffset = -1,yoffset = -1,moves = [1,2]
             )
-            return xc[nfc,niy,nix].reshape(the_shape),yc[nfc,niy,nix].reshape(the_shape)
+            x = xc[nfc,niy,nix]
+            y = yc[nfc,niy,nix]
+            orig_index = (face,iyg,ixg)
         elif len(cshape) ==2:
-            iyg,ixg = np.meshgrid(iyg,ixg)
+            iyg,ixg = np.meshgrid(iyg,ixg,indexing = 'ij')
             the_shape = iyg.shape
-            iyg,ixg = tuple(i.ravel() for i in [iyg,ixg])
+            iyg,ixg = tuple(i.ravel().astype(int) for i in [iyg,ixg])
             niy,nix = tp.ind_tend_vec(
-                (iyg,ixg),1
+                (iyg,ixg),1*np.ones_like(ixg,int)
             )
             niy,nix = tp.ind_tend_vec(
-                (niy,nix),2
+                (niy,nix),2*np.ones_like(ixg,int)
             )
-            out_of_bound = np.where(niy<0)
             x = xc[niy,nix]
             y = yc[niy,nix]
-            x[out_of_bound] = xg[iyg,ixg][out_of_bound]
-            y[out_of_bound] = yg[iyg,ixg][out_of_bound]
-            return x,y
+            orig_index = (iyg,ixg)
+        out_of_bound = np.where(niy<0)
+        x[out_of_bound] = xg[orig_index][out_of_bound]
+        y[out_of_bound] = yg[orig_index][out_of_bound]
+        return x.reshape(the_shape),y.reshape(the_shape)
             
