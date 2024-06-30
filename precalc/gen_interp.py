@@ -115,11 +115,11 @@ def sd_position_from_latlon(lat,lon,ocedata):
     (
         pt.fcg[upper_righ],
         pt.iyg[upper_righ],
-        pt.iyg[upper_righ],
+        pt.ixg[upper_righ],
     ) = find_diagnal_index_with_face_vectorized(
         pt.fcg[upper_righ],
         pt.iyg[upper_righ],
-        pt.iyg[upper_righ],
+        pt.ixg[upper_righ],
         tp,
     )
     pt.rxg[upper_righ] = pt.rx[upper_righ]-0.5
@@ -129,11 +129,11 @@ def sd_position_from_latlon(lat,lon,ocedata):
     (
         pt.fcg[upper_left],
         pt.iyg[upper_left],
-        pt.iyg[upper_left],
+        pt.ixg[upper_left],
     ) = tp.ind_tend_vec((
         pt.fcg[upper_left],
         pt.iyg[upper_left],
-        pt.iyg[upper_left]),
+        pt.ixg[upper_left]),
         0*np.ones(len(upper_left),int),cuvwg = 'G'
     )
     pt.ryg[upper_left] = pt.ry[upper_left]-0.5
@@ -142,14 +142,14 @@ def sd_position_from_latlon(lat,lon,ocedata):
     (
         pt.fcg[lower_righ],
         pt.iyg[lower_righ],
-        pt.iyg[lower_righ],
+        pt.ixg[lower_righ],
     ) = tp.ind_tend_vec((
         pt.fcg[lower_righ],
         pt.iyg[lower_righ],
-        pt.iyg[lower_righ]),
-        3*np.ones(len(upper_left),int),cuvwg = 'G'
+        pt.ixg[lower_righ]),
+        3*np.ones(len(lower_righ),int),cuvwg = 'G'
     )
-    pt.rxg[lower_righ] = pt.rx[upper_righ]-0.5
+    pt.rxg[lower_righ] = pt.rx[lower_righ]-0.5
     return pt
 
 def calc_scalar_weight(pt):
@@ -181,17 +181,70 @@ def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
     nface,niy,nix = pt._fatten_h(scalar_knw)
     ind_shape = nix.shape
     if nface is not None:
-        inds = (nface.ravel(),niy.revel(),nix.revel())
+        inds = (nface.ravel(),niy.ravel(),nix.ravel())
     else:
-        inds = (niy.revel(),nix.revel())
+        inds = (niy.ravel(),nix.ravel())
     inds = np.column_stack(inds)
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
     inverse = inverse.reshape(ind_shape)
     return uni_ind, inverse
 
-def read_data(data,uni_ind):
-    to_read = tuple(uni_ind[...,i] for i in range(uni_ind.shape[-1]))
-    if isinstance(data,zarr.core.Array):
-        return data.get_coordinate_selection(to_read)
-    else:
-        return sd.smart_read.smart_read(data,to_read)
+def vort_data_retrieve_with_face(pt):
+    """Find the indexes to read for the particles
+    
+    Parameters
+    ----------
+    pt: sd.Position
+        The particle location object
+        
+    Returns
+    -------
+    uni_ind: np.ndarray
+        A 2D array containing all the indices to read.
+        Every row contain information of whether it is u or v
+    inverse: np.ndarray
+        Unravel the data to construct the interpolation
+    """
+    # Hack the particle object a bit
+    tp = pt.ocedata.tp
+    inds = []
+    rot = []
+    for component in ['u','v']:
+        ufc,uiy,uix = copy.deepcopy((pt.fcg,pt.iyg,pt.ixg))
+        if component == 'u':
+            uwhich = np.zeros_like(ufc)
+            dwhich = np.zeros_like(ufc)
+            uiy -= 1
+        else:
+            uwhich = np.ones_like(ufc)
+            dwhich = np.ones_like(ufc)
+            uix -= 1
+        redo = np.where(tp.check_illegal((ufc,uiy,uix)))[0]
+        for j in redo:
+            if component == 'u':
+                which,nind = tp._ind_tend_U((pt.fcg[j],pt.iyg[j],pt.ixg[j]),1)
+            else:
+                which,nind = tp._ind_tend_V((pt.fcg[j],pt.iyg[j],pt.ixg[j]),2)
+                if which == 'U':
+                    rot.append(j)
+            if which == 'U':
+                uwhich[j] = 0
+            else:
+                uwhich[j] = 1
+            (ufc[j],uiy[j],uix[j]) = nind
+        inds.append(([dwhich,uwhich],[pt.fcg,ufc],[pt.iyg,uiy],[pt.ixg,uix]))
+    
+    inds = np.array(inds).swapaxes(1,0)
+    print(inds.shape)
+    ind_shape = inds[0].shape
+    inds = inds.reshape(4,-1).T
+    uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
+    inverse = inverse.reshape(ind_shape)
+    return uni_ind, inverse, rot
+
+# def read_data(data,uni_ind):
+#     to_read = tuple(uni_ind[...,i] for i in range(uni_ind.shape[-1]))
+#     if isinstance(data,zarr.core.Array):
+#         return data.get_coordinate_selection(to_read)
+#     else:
+#         return sd.smart_read.smart_read(data,to_read)
