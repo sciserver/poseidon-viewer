@@ -1,5 +1,7 @@
 import numpy as np
 import warnings
+import xarray as xr
+import seaduck as sd
 from precalc.gen_interp import find_diagnal_index_with_face_vectorized
 
 def subsample_cguv(shape,grain,gshape = None,return_slice = True):
@@ -30,15 +32,7 @@ def subsample_cguv(shape,grain,gshape = None,return_slice = True):
     else:
         return np.arange(xc_start, shape, grain),np.arange(0, gshape, grain)
 
-def convert_back(ind,grain,c_or_g = 'c'):
-    if c_or_g == 'c':
-        xc_start = np.ceil(grain/2)-1
-    else:
-        xc_start = 0
-        
-    return int(xc_start+ind*grain)
-
-def create_xgyg(grain,oce):
+def create_xgyg(oce,grain):
     xc = oce.XC
     yc = oce.YC
     xg = oce.XG
@@ -82,4 +76,19 @@ def create_xgyg(grain,oce):
         x[out_of_bound] = xg[orig_index][out_of_bound]
         y[out_of_bound] = yg[orig_index][out_of_bound]
         return x.reshape(the_shape),y.reshape(the_shape)
-            
+
+def subsample_ocedata(oce,grain):
+    small = xr.Dataset()
+    shape = oce.XC.shape
+    xslc,_ = subsample_cguv(shape[-1],grain)
+    yslc,_ = subsample_cguv(shape[-2],grain)
+    small['XC'] = oce._ds['XC'][...,yslc,xslc]
+    small['YC'] = oce._ds['YC'][...,yslc,xslc]
+    xg,yg = create_xgyg(oce,grain)
+    if len(shape)==3:
+        small['XG'] = xr.DataArray(xg,dims = ('face','Yp1','Xp1'))
+        small['YG'] = xr.DataArray(yg,dims = ('face','Yp1','Xp1'))
+    else:
+        small['XG'] = xr.DataArray(xg,dims = ('Yp1','Xp1'))
+        small['YG'] = xr.DataArray(yg,dims = ('Yp1','Xp1'))
+    return sd.OceData(small)

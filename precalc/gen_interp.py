@@ -242,9 +242,61 @@ def vort_data_retrieve_with_face(pt):
     inverse = inverse.reshape(ind_shape)
     return uni_ind, inverse, rot
 
-# def read_data(data,uni_ind):
-#     to_read = tuple(uni_ind[...,i] for i in range(uni_ind.shape[-1]))
-#     if isinstance(data,zarr.core.Array):
-#         return data.get_coordinate_selection(to_read)
-#     else:
-#         return sd.smart_read.smart_read(data,to_read)
+def convert_back(ind,grain,c_or_g = 'c'):
+    if c_or_g == 'c':
+        xc_start = np.ceil(grain/2)-1
+    else:
+        xc_start = 0
+        
+    return (xc_start+ind*grain).astype(int)
+
+def convert_uv_ind_back(vinds,grain):
+    """Return the original index for UV grid
+    """
+    is_v = vinds[:,0]
+    xc_start = int(np.ceil(grain/2)-1)
+    vinds[:,-1]*=grain
+    vinds[:,-2]*=grain
+    
+    vinds[:,-1] += xc_start*is_v
+    vinds[:,-2] += xc_start*(1-is_v)
+    return vinds
+
+def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
+    """Get everything necessary given lat lon and ocedata. 
+    """
+    pt = sd_position_from_latlon(lat,lon,oce)
+    if var == 'scalar':
+        weight = calc_scalar_weight(pt)
+        ind,inverse = scalar_data_retrieve(pt)
+        if grain is not None:
+            ind[:,-1] = convert_back(ind[:,-1],grain)
+            ind[:,-2] = convert_back(ind[:,-2],grain)
+        return weight,ind,inverse
+    elif var == 'vort':
+        ind, inverse, rot = vort_data_retrieve_with_face(pt)
+        du_weight = np.ones_like(inverse[0])
+        du_weight[0] *= -1 
+        dv_weight = np.ones_like(inverse[0])
+        dv_weight[1] *= -1 
+        dv_weight[1,rot] *= -1
+        # TODO: handle dx dy here
+        if grain is not None:
+            ind = convert_uv_ind_back(ind,grain)
+        return (du_weight,dv_weight),ind,inverse
+    
+def make_scalar_image(read_from,weight,ind,inverse,shape = (256,256)):
+    data = read_from[tuple(ind.T)]
+    value2d = data[inverse]
+    # TODO: move this too precalc step
+    value2d[value2d == 0.0] = np.nan
+    result = np.einsum('ij,ij->i',weight,value2d)
+    return result.reshape(shape).T[...,::-1]
+
+def make_vort_image(read_from,weight,ind,inverse,shape = (256,256)):
+    data = read_from[tuple(ind.T)]
+    value2d = data[inverse]
+    value2d[value2d == 0.0] = np.nan
+    du_weight,dv_weight = weight
+    result = np.einsum('ij,ij->j',du_weight,value2d[0])+np.einsum('ij,ij->j',dv_weight,value2d[1])
+    return result.reshape(shape).T[...,::-1]
