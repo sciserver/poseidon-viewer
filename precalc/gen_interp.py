@@ -111,7 +111,7 @@ def sd_position_from_latlon(lat,lon,ocedata):
     # lower_left = np.where(np.logical_and(pt.rx>0,pt.ry<0))
     # points in the lower_left is already taken care of
     
-    upper_righ = np.where(np.logical_and(pt.rx>0,pt.ry>0))
+    upper_righ = np.where(np.logical_and(pt.rx>0,pt.ry>0))[0]
     (
         pt.fcg[upper_righ],
         pt.iyg[upper_righ],
@@ -125,7 +125,7 @@ def sd_position_from_latlon(lat,lon,ocedata):
     pt.rxg[upper_righ] = pt.rx[upper_righ]-0.5
     pt.ryg[upper_righ] = pt.ry[upper_righ]-0.5
     
-    upper_left = np.where(np.logical_and(pt.rx<0,pt.ry>0))
+    upper_left = np.where(np.logical_and(pt.rx<0,pt.ry>0))[0]
     (
         pt.fcg[upper_left],
         pt.iyg[upper_left],
@@ -138,7 +138,7 @@ def sd_position_from_latlon(lat,lon,ocedata):
     )
     pt.ryg[upper_left] = pt.ry[upper_left]-0.5
     
-    lower_righ = np.where(np.logical_and(pt.rx>0,pt.ry<0))
+    lower_righ = np.where(np.logical_and(pt.rx>0,pt.ry<0))[0]
     (
         pt.fcg[lower_righ],
         pt.iyg[lower_righ],
@@ -150,12 +150,21 @@ def sd_position_from_latlon(lat,lon,ocedata):
         3*np.ones(len(lower_righ),int),cuvwg = 'G'
     )
     pt.rxg[lower_righ] = pt.rx[lower_righ]-0.5
+    need_rot = np.where(pt.face!=pt.fcg)[0]
+    for i in need_rot:
+        edge, new_edge = tp.mutual_direction(
+            pt.face[i], pt.fcg[i], transitive=True
+        )
+        rot = (np.pi - sd.topology.DIRECTIONS[edge] + sd.topology.DIRECTIONS[new_edge]) % (
+            np.pi * 2
+        )
+        pt.rxg[i],pt.ryg[i] = sd.utils.local_to_latlon(pt.rxg[i], pt.ryg[i], np.cos(rot), np.sin(rot))
     return pt
 
 def calc_scalar_weight(pt):
     """Thin wrapper aroung sd.utils.weight_f_node
     """
-    return sd.utils.weight_f_node(pt.rxg,pt.ryg)
+    return sd.utils.weight_f_node(pt.rxg,pt.ryg)[:,[2,3,1,0]]
 
 def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
     """Find the indexes to read for the particles
