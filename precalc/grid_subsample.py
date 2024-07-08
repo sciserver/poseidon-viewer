@@ -82,8 +82,8 @@ def subsample_ocedata(oce,grain):
     shape = oce.XC.shape
     xslc,_ = subsample_cguv(shape[-1],grain)
     yslc,_ = subsample_cguv(shape[-2],grain)
-    small['XC'] = oce._ds['XC'][...,yslc,xslc]
-    small['YC'] = oce._ds['YC'][...,yslc,xslc]
+    small['XC'] = xr.DataArray(oce._ds['XC'][...,yslc,xslc].data,dims = oce._ds['XC'].dims)
+    small['YC'] = xr.DataArray(oce._ds['YC'][...,yslc,xslc].data,dims = oce._ds['YC'].dims)
     xg,yg = create_xgyg(oce,grain)
     if len(shape)==3:
         small['XG'] = xr.DataArray(xg,dims = ('face','Yp1','Xp1'))
