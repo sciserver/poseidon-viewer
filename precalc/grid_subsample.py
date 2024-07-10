@@ -91,4 +91,7 @@ def subsample_ocedata(oce,grain):
     else:
         small['XG'] = xr.DataArray(xg,dims = ('Yp1','Xp1'))
         small['YG'] = xr.DataArray(yg,dims = ('Yp1','Xp1'))
-    return sd.OceData(small)
+    small = sd.OceData(small)
+    small['dXG'] = np.array(oce._ds['dxG'][...,yslc,xslc])
+    small['dYG'] = np.array(oce._ds['dyG'][...,yslc,xslc])
+    return small

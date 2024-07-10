@@ -83,6 +83,75 @@ def find_diagnal_index_with_face_vectorized(face,iy,ix,tp,xoffset = 1,yoffset = 
             nface[j],niy[j],nix[j] = -1,-1,-1
     return nface,niy,nix
 
+def fatten_h(pt, knw, ind_moves_kwarg={}):
+    """Mirror the Position._fatten_h method in seaduck.
+
+    Fatten means to find the neighboring points of the points of interest based on the kernel.
+    faces,iys,ixs are 1d arrays of size n.
+    We are applying a kernel of size m.
+    This is going to return a n * m array of indexes.
+    A very slim vector is now a matrix, and hence the name.
+    each row represen all the node needed for interpolation of a single point.
+    "h" represent we are only doing it on the horizontal plane.
+    This function here is more lenient in the sense that it will return -1 when the index is not legal. 
+
+    Parameters
+    ----------
+    knw: KnW object
+        The kernel used to find neighboring points.
+    ind_moves_kward: dict, optional
+        Key word argument to put into ind_moves method of the Topology object.
+        Read Topology.ind_moves for more detail.
+    """
+    #         pt.ind_h_dict
+    kernel = knw.kernel.astype(int)
+    kernel_tends = [sd.eulerian._translate_to_tendency(k) for k in kernel]
+    m = len(kernel_tends)
+    n = len(pt.iy)
+    tp = pt.ocedata.tp
+
+    # the arrays we are going to return
+    if pt.face is not None:
+        n_faces = np.zeros((n, m), int)
+        n_faces.T[:] = pt.face
+    n_iys = np.zeros((n, m), int)
+    n_ixs = np.zeros((n, m), int)
+
+    # first try to fatten it naively(fast and vectorized)
+    for i, node in enumerate(kernel):
+        x_disp, y_disp = node
+        n_iys[:, i] = pt.iy + y_disp
+        n_ixs[:, i] = pt.ix + x_disp
+    cuvwg = ind_moves_kwarg.get("cuvwg", "C")
+    if pt.face is not None:
+        illegal = tp.check_illegal((n_faces, n_iys, n_ixs), cuvwg=cuvwg)
+    else:
+        illegal = tp.check_illegal((n_iys, n_ixs), cuvwg=cuvwg)
+
+    redo = np.array(np.where(illegal)).T
+    for loc in redo:
+        j, i = loc
+        if pt.face is not None:
+            ind = (pt.face[j], pt.iy[j], pt.ix[j])
+        else:
+            ind = (pt.iy[j], pt.ix[j])
+        # everyone start from the [0,0] node
+        moves = kernel_tends[i]
+        # moves is a list of operations to get to a single point
+        # [2,2] means move to the left and then move to the left again.
+        try:
+            n_ind = tp.ind_moves(ind, moves, **ind_moves_kwarg)
+        except IndexError:
+            n_ind = tuple(-1 for i in range(len(ind)))
+        if pt.face is not None:
+            n_faces[j, i], n_iys[j, i], n_ixs[j, i] = n_ind
+        else:
+            n_iys[j, i], n_ixs[j, i] = n_ind
+    if pt.face is not None:
+        return n_faces, n_iys, n_ixs
+    else:
+        return None, n_iys, n_ixs
+
 def sd_position_from_latlon(lat,lon,ocedata):
     """Create seaduck.Position object for interpolation
     
@@ -187,7 +256,7 @@ def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
     pt.face = pt.fcg
     pt.iy = pt.iyg
     pt.ix = pt.ixg
-    nface,niy,nix = pt._fatten_h(scalar_knw)
+    nface,niy,nix = fatten_h(pt,scalar_knw)
     ind_shape = nix.shape
     if nface is not None:
         inds = (nface.ravel(),niy.ravel(),nix.ravel())
@@ -230,12 +299,16 @@ def vort_data_retrieve_with_face(pt):
             uix -= 1
         redo = np.where(tp.check_illegal((ufc,uiy,uix)))[0]
         for j in redo:
-            if component == 'u':
-                which,nind = tp._ind_tend_U((pt.fcg[j],pt.iyg[j],pt.ixg[j]),1)
-            else:
-                which,nind = tp._ind_tend_V((pt.fcg[j],pt.iyg[j],pt.ixg[j]),2)
-                if which == 'U':
-                    rot.append(j)
+            try:
+                if component == 'u':
+                    which,nind = tp._ind_tend_U((pt.fcg[j],pt.iyg[j],pt.ixg[j]),1)
+                else:
+                    which,nind = tp._ind_tend_V((pt.fcg[j],pt.iyg[j],pt.ixg[j]),2)
+                    if which == 'U':
+                        rot.append(j)
+            except IndexError:
+                which = 'U',
+                nind = (-1,-1,-1)
             if which == 'U':
                 uwhich[j] = 0
             else:
@@ -244,7 +317,6 @@ def vort_data_retrieve_with_face(pt):
         inds.append(([dwhich,uwhich],[pt.fcg,ufc],[pt.iyg,uiy],[pt.ixg,uix]))
     
     inds = np.array(inds).swapaxes(1,0)
-    print(inds.shape)
     ind_shape = inds[0].shape
     inds = inds.reshape(4,-1).T
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
@@ -284,14 +356,18 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
         return weight,ind,inverse
     elif var == 'vort':
         ind, inverse, rot = vort_data_retrieve_with_face(pt)
-        du_weight = np.ones_like(inverse[0])
+        dx = oce['dXG'][pt.face,pt.iy,pt.ix]
+        dy = oce['dYG'][pt.face,pt.iy,pt.ix]
+        du_weight = np.ones_like(inverse[0])/dy
         du_weight[0] *= -1 
-        dv_weight = np.ones_like(inverse[0])
+        dv_weight = np.ones_like(inverse[0])/dx
         dv_weight[1] *= -1 
         dv_weight[1,rot] *= -1
         # TODO: handle dx dy here
         if grain is not None:
             ind = convert_uv_ind_back(ind,grain)
+            du_weight/=grain
+            dv_weight/=grain
         return (du_weight,dv_weight),ind,inverse
     
 def make_scalar_image(read_from,weight,ind,inverse,shape = (256,256)):
