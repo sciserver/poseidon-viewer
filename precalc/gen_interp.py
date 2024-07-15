@@ -353,7 +353,7 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
         if grain is not None:
             ind[:,-1] = convert_back(ind[:,-1],grain)
             ind[:,-2] = convert_back(ind[:,-2],grain)
-        return weight,ind,inverse
+        return weight.astype('float32'),ind.astype('int32'),inverse.astype('int32')
     elif var == 'vort':
         ind, inverse, rot = vort_data_retrieve_with_face(pt)
         dx = oce['dXG'][pt.face,pt.iy,pt.ix]
@@ -368,7 +368,7 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
             ind = convert_uv_ind_back(ind,grain)
             du_weight/=grain
             dv_weight/=grain
-        return (du_weight,dv_weight),ind,inverse
+        return (du_weight.astype('float32'),dv_weight.astype('float32')),ind.astype('int32'),inverse.astype('int32')
     
 def make_scalar_image(read_from,weight,ind,inverse,shape = (256,256)):
     data = read_from[tuple(ind.T)]
