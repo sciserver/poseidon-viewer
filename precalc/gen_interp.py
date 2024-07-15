@@ -321,6 +321,7 @@ def vort_data_retrieve_with_face(pt):
     inds = inds.reshape(4,-1).T
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
     inverse = inverse.reshape(ind_shape)
+    # TODO: calculate how many are U, how many are V
     return uni_ind, inverse, rot
 
 def convert_back(ind,grain,c_or_g = 'c'):
@@ -369,19 +370,3 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
             du_weight/=grain
             dv_weight/=grain
         return (du_weight.astype('float32'),dv_weight.astype('float32')),ind.astype('int32'),inverse.astype('int32')
-    
-def make_scalar_image(read_from,weight,ind,inverse,shape = (256,256)):
-    data = read_from[tuple(ind.T)]
-    value2d = data[inverse]
-    # TODO: move this too precalc step
-    value2d[value2d == 0.0] = np.nan
-    result = np.einsum('ij,ij->i',weight,value2d)
-    return result.reshape(shape).T[...,::-1]
-
-def make_vort_image(read_from,weight,ind,inverse,shape = (256,256)):
-    data = read_from[tuple(ind.T)]
-    value2d = data[inverse]
-    value2d[value2d == 0.0] = np.nan
-    du_weight,dv_weight = weight
-    result = np.einsum('ij,ij->j',du_weight,value2d[0])+np.einsum('ij,ij->j',dv_weight,value2d[1])
-    return result.reshape(shape).T[...,::-1]
