@@ -302,10 +302,16 @@ def vort_data_retrieve_with_face(pt):
             try:
                 if component == 'u':
                     which,nind = tp._ind_tend_U((pt.fcg[j],pt.iyg[j],pt.ixg[j]),1)
+                    if which == 'V':
+                        edge2new_face = tp.mutual_direction(pt.fcg[j],nind[0],transitive = True)
+                        if edge2new_face in [0,1]:
+                            rot.append(j)
                 else:
                     which,nind = tp._ind_tend_V((pt.fcg[j],pt.iyg[j],pt.ixg[j]),2)
                     if which == 'U':
-                        rot.append(j)
+                        edge2new_face = tp.mutual_direction(pt.fcg[j],nind[0],transitive = True)
+                        if edge2new_face in [2,3]:
+                            rot.append(j)
             except IndexError:
                 which = 'U',
                 nind = (-1,-1,-1)
