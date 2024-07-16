@@ -238,7 +238,7 @@ def calc_scalar_weight(pt):
     weight[iregular] = np.array([0.25,0.25,0.25,0.25])
     return weight
 
-def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
+def scalar_data_retrieve(pt,scalar_knw = scalar_knw,grain = None,exmp_scl = None):
     """Find the indexes to read for the particles
     
     Parameters
@@ -255,6 +255,8 @@ def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
     inverse: np.ndarray
         Unravel the data to construct the interpolation
     """
+    if exmp_scl is None:
+        raise ValueError("need a snapshot of tracer (salinity) for masking")
     # Hack the particle object a bit
     pt.face = pt.fcg
     pt.iy = pt.iyg
@@ -266,11 +268,18 @@ def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
     else:
         inds = (niy.ravel(),nix.ravel())
     inds = np.column_stack(inds)
+    if grain is not None:
+        inds[:,-1] = convert_back(inds[:,-1],grain)
+        inds[:,-2] = convert_back(inds[:,-2],grain)
+    neg = np.where(inds.min(axis = -1)<0)
+    inds[neg] = np.array([-1 for i in range(inds.shape[-1])])
+    masked = exmp_scl[tuple(inds.T)]==0
+    inds[masked] = np.array([-1 for i in range(inds.shape[-1])])
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
     inverse = inverse.reshape(ind_shape)
     return uni_ind, inverse
 
-def vort_data_retrieve_with_face(pt):
+def vort_data_retrieve_with_face(pt,grain = None,exmp_vel = None):
     """Find the indexes to read for the particles
     
     Parameters
@@ -287,6 +296,8 @@ def vort_data_retrieve_with_face(pt):
         Unravel the data to construct the interpolation
     """
     # Hack the particle object a bit
+    if exmp_vel is None:
+        raise ValueError("please give a snapshot of UV for masking")
     tp = pt.ocedata.tp
     inds = []
     rotu = []
@@ -325,9 +336,15 @@ def vort_data_retrieve_with_face(pt):
     inds = np.array(inds).swapaxes(1,0)
     ind_shape = inds[0].shape
     inds = inds.reshape(4,-1).T
+    if grain is not None:
+        inds = convert_uv_ind_back(inds,grain)
+    neg = np.where(inds.min(axis = -1)<0)
+    inds[neg] = np.array([-1 for i in range(4)])
+    masked = exmp_vel[tuple(inds.T)]==0
+    inds[masked] = np.array([-1 for i in range(4)])
+    
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
     inverse = inverse.reshape(ind_shape)
-    # TODO: calculate how many are U, how many are V
     return uni_ind, inverse, (rotu,rotv)
 
 def convert_back(ind,grain,c_or_g = 'c'):
@@ -350,19 +367,16 @@ def convert_uv_ind_back(vinds,grain):
     vinds[:,-2] += xc_start*(1-is_v)
     return vinds
 
-def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
+def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None,exmp_vel = None,exmp_scl = None):
     """Get everything necessary given lat lon and ocedata. 
     """
     pt = sd_position_from_latlon(lat,lon,oce)
     if var == 'scalar':
         weight = calc_scalar_weight(pt)
-        ind,inverse = scalar_data_retrieve(pt)
-        if grain is not None:
-            ind[:,-1] = convert_back(ind[:,-1],grain)
-            ind[:,-2] = convert_back(ind[:,-2],grain)
+        ind,inverse = scalar_data_retrieve(pt,grain = grain,exmp_scl = exmp_scl)
         return weight.astype('float32'),ind.astype('int32'),inverse.astype('int32')
     elif var == 'vort':
-        ind, inverse, (rotu,rotv) = vort_data_retrieve_with_face(pt)
+        ind, inverse, (rotu,rotv) = vort_data_retrieve_with_face(pt,grain = grain,exmp_vel = exmp_vel)
         dx = oce['dXG'][pt.face,pt.iy,pt.ix]
         dy = oce['dYG'][pt.face,pt.iy,pt.ix]
         du_weight = np.ones_like(inverse[0])/dy
@@ -373,12 +387,12 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
         dv_weight[1,rotv] *= -1
         # TODO: handle dx dy here
         if grain is not None:
-            ind = convert_uv_ind_back(ind,grain)
             du_weight/=grain
             dv_weight/=grain
-        return (du_weight.astype('float32'),dv_weight.astype('float32')),ind.astype('int32'),inverse.astype('int32')
+        splitter = np.searchsorted(ind[:,0],1)
+        return (du_weight.astype('float32'),dv_weight.astype('float32')),ind.astype('int32'),(inverse.astype('int32'),splitter)
     
-def generate_interpolator(env,zooms,subocedata,unique_grains,inverse_grain):
+def store_interpolator(env,zooms,subocedata,unique_grains,inverse_grain,exmp_vel = None,exmp_scl = None):
     with env.begin(write=True) as txn:
         for iz,zoom in enumerate(zooms):
             print(zoom)
@@ -392,5 +406,7 @@ def generate_interpolator(env,zooms,subocedata,unique_grains,inverse_grain):
                         y = y.ravel()
                         sub2use = subocedata[inverse_grain[iz]]
                         grain = unique_grains[inverse_grain[iz]]
-                        interpolator = weight_index_inverse_from_latlon(sub2use,y,x,var = var,grain = grain)
+                        interpolator = weight_index_inverse_from_latlon(sub2use,y,x,var = var,grain = grain,
+                                                                        ,exmp_vel = exmp_vel,exmp_scl = exmp_scl
+                                                                       )
                         txn.put(key, pickle.dumps(interpolator))
