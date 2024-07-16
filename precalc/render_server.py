@@ -29,7 +29,7 @@ value = '[]'.encode()
 
 def make_scalar_image(read_from,interpolator,varname,itime,idepth,shape = (256,256)):
     weight,ind,inverse = interpolator
-    data = read_from[varname].vindex[(itime,idepth)+tuple(ind.T)]
+    data = np.array(read_from[varname].vindex[(itime,idepth)+tuple(ind.T)])
     value2d = data[inverse]
     # TODO: move this too precalc step
     value2d[value2d == 0.0] = np.nan
@@ -41,8 +41,8 @@ def make_vort_image(read_from,interpolator,itime,idepth,uname = 'U',vname = 'V',
     # TODO: fix the reading for zarr
     splitter = np.searchsorted(ind[:,0],1)
     data = np.empty(len(ind))
-    data[:splitter] = read_from[uname].vindex[(itime,idepth)+tuple(ind[:splitter,1:].T)]
-    data[splitter:] = read_from[vname].vindex[(itime,idepth)+tuple(ind[splitter:,1:].T)]
+    data[:splitter] = np.array(read_from[uname].vindex[(itime,idepth)+tuple(ind[:splitter,1:].T)])
+    data[splitter:] = np.array(read_from[vname].vindex[(itime,idepth)+tuple(ind[splitter:,1:].T)])
     value2d = data[inverse]
     value2d[value2d == 0.0] = np.nan
     du_weight,dv_weight = weight

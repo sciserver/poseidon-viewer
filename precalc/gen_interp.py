@@ -286,7 +286,8 @@ def vort_data_retrieve_with_face(pt):
     # Hack the particle object a bit
     tp = pt.ocedata.tp
     inds = []
-    rot = []
+    rotu = []
+    rotv = []
     for component in ['u','v']:
         ufc,uiy,uix = copy.deepcopy((pt.fcg,pt.iyg,pt.ixg))
         if component == 'u':
@@ -303,15 +304,11 @@ def vort_data_retrieve_with_face(pt):
                 if component == 'u':
                     which,nind = tp._ind_tend_U((pt.fcg[j],pt.iyg[j],pt.ixg[j]),1)
                     if which == 'V':
-                        edge2new_face = tp.mutual_direction(pt.fcg[j],nind[0],transitive = True)
-                        if edge2new_face in [0,1]:
-                            rot.append(j)
+                        rotu.append(j)
                 else:
                     which,nind = tp._ind_tend_V((pt.fcg[j],pt.iyg[j],pt.ixg[j]),2)
                     if which == 'U':
-                        edge2new_face = tp.mutual_direction(pt.fcg[j],nind[0],transitive = True)
-                        if edge2new_face in [2,3]:
-                            rot.append(j)
+                        rotv.append(j)
             except IndexError:
                 which = 'U',
                 nind = (-1,-1,-1)
@@ -328,7 +325,7 @@ def vort_data_retrieve_with_face(pt):
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
     inverse = inverse.reshape(ind_shape)
     # TODO: calculate how many are U, how many are V
-    return uni_ind, inverse, rot
+    return uni_ind, inverse, (rotu,rotv)
 
 def convert_back(ind,grain,c_or_g = 'c'):
     if c_or_g == 'c':
@@ -362,14 +359,15 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
             ind[:,-2] = convert_back(ind[:,-2],grain)
         return weight.astype('float32'),ind.astype('int32'),inverse.astype('int32')
     elif var == 'vort':
-        ind, inverse, rot = vort_data_retrieve_with_face(pt)
+        ind, inverse, (rotu,rotv) = vort_data_retrieve_with_face(pt)
         dx = oce['dXG'][pt.face,pt.iy,pt.ix]
         dy = oce['dYG'][pt.face,pt.iy,pt.ix]
         du_weight = np.ones_like(inverse[0])/dy
         du_weight[0] *= -1 
+        du_weight[1,rotu] *= -1
         dv_weight = np.ones_like(inverse[0])/dx
         dv_weight[1] *= -1 
-        dv_weight[1,rot] *= -1
+        dv_weight[1,rotv] *= -1
         # TODO: handle dx dy here
         if grain is not None:
             ind = convert_uv_ind_back(ind,grain)
