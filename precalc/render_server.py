@@ -69,7 +69,7 @@ def np_image_from_req(req):
     depth = int(params[5])
 
     with env.begin(write=False) as txn:
-        key=f'{interpolator_type}/{zoom}/{j}/{i}'
+        key=f'{interpolator_type}/{zoom}/{i}/{j}'
         interpolator = pickle.loads(txn.get(key.encode()))
 
     if interpolator_type == 'vort':
