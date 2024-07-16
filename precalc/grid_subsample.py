@@ -95,3 +95,52 @@ def subsample_ocedata(oce,grain):
     small['dXG'] = np.array(oce._ds['dxG'][...,yslc,xslc])
     small['dYG'] = np.array(oce._ds['dyG'][...,yslc,xslc])
     return small
+
+def find_common_factors(num1,num2):
+    common=[]
+    g=np.gcd(num1, num2)
+    for i in range(1, int(np.sqrt(g))+1):
+        if g%i==0:
+            common.append(i)
+            if g!=i*i:
+                common.append(g//i)
+    return np.array(sorted(common))
+
+def pick_grain_size(zooms,oce,resolution = 256,factor = 5):
+    rep_dx = np.percentile(tub['dXG'],90)
+    interp_dx = 6371e3/(2**zooms)/resolution
+    h_shape = tub.tp.h_shape
+    avail = find_common_factors(h_shape[-2],h_shape[-1])
+    avail_dx = avail*rep_dx
+    grains = []
+    for dx in interp_dx:
+        grain_level,interp_res = sd.utils.find_ind(avail_dx,factor*dx,above = False)
+        # could add some functions to avoid odd numbers 
+        grain = avail[grain_level]
+        grains.append(grain)
+    return grains
+
+def generate_subocedata(zooms,oce,resolution = 256):
+    """Create the corresponding sd.OceData after coarse-grain defined by zoom levels
+    
+    Parameters
+    ----------
+    zooms: np.ndarray
+         numpy array of int for zoom levels
+    oce: sd.OceData
+        The original dataset
+    resolution: number
+        The number of point on each face. 
+    """
+    oce['dXG'] = np.array(oce['dXG'])
+    oce['dYG'] = np.array(oce['dYG'])
+    grains = pick_grain_size(zooms,oce,resolution = resolution)
+    unique_grain,inverse_grain = np.unique(grains,return_inverse = True)
+    subocedata = []
+    for grain in unique_grain:
+        print(f"Creating subset of the sd.OceData object with grain size {grain}")
+        if grain ==1:
+            subocedata.append(oce)
+        else:
+            subocedata.append(subsample_ocedata(oce,grain))
+    return subocedata,unique_grain,inverse_grain

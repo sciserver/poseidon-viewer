@@ -376,3 +376,20 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None):
             du_weight/=grain
             dv_weight/=grain
         return (du_weight.astype('float32'),dv_weight.astype('float32')),ind.astype('int32'),inverse.astype('int32')
+    
+def generate_interpolator(env,zooms,subocedata,unique_grains,inverse_grain):
+    with env.begin(write=True) as txn:
+        for iz,zoom in enumerate(zooms):
+            print(zoom)
+            number_of_blocks = int(2**zoom)
+            for blck_x in range(number_of_blocks):
+                for blck_y in range(number_of_blocks):
+                    for var in ['scalar','vort']:
+                        key= f'{var}/{zoom}/{blck_x}/{blck_y}'.encode()
+                        x,y = lonlat4global_map(zoom,blck_y,blck_x)
+                        x = x.ravel()
+                        y = y.ravel()
+                        sub2use = subocedata[inverse_grain[iz]]
+                        grain = unique_grains[inverse_grain[iz]]
+                        interpolator = weight_index_inverse_from_latlon(sub2use,y,x,var = var,grain = grain)
+                        txn.put(key, pickle.dumps(interpolator))
