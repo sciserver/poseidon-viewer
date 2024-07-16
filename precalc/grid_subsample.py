@@ -33,6 +33,7 @@ def subsample_cguv(shape,grain,gshape = None,return_slice = True):
         return np.arange(xc_start, shape, grain),np.arange(0, gshape, grain)
 
 def create_xgyg(oce,grain):
+    """Create the new XG,YG location of subset ocedata object"""
     xc = oce.XC
     yc = oce.YC
     xg = oce.XG
@@ -78,6 +79,7 @@ def create_xgyg(oce,grain):
         return x.reshape(the_shape),y.reshape(the_shape)
 
 def subsample_ocedata(oce,grain):
+    """Subset an ocedata horizontally and return a new one"""
     small = xr.Dataset()
     shape = oce.XC.shape
     xslc,_ = subsample_cguv(shape[-1],grain)
@@ -97,6 +99,7 @@ def subsample_ocedata(oce,grain):
     return small
 
 def find_common_factors(num1,num2):
+    """find all common factors of two numbers"""
     common=[]
     g=np.gcd(num1, num2)
     for i in range(1, int(np.sqrt(g))+1):
@@ -107,6 +110,8 @@ def find_common_factors(num1,num2):
     return np.array(sorted(common))
 
 def pick_grain_size(zooms,oce,resolution = 256,factor = 5):
+    """Figure out the approprate grain size given zoon levels
+    """
     rep_dx = np.percentile(oce['dXG'],90)
     interp_dx = 6371e3/(2**zooms)/resolution
     h_shape = oce.tp.h_shape

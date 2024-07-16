@@ -274,7 +274,7 @@ def scalar_data_retrieve(pt,scalar_knw = scalar_knw,grain = None,exmp_scl = None
         inds[:,-2] = convert_back(inds[:,-2],grain)
     neg = np.where(inds.min(axis = -1)<0)
     inds[neg] = np.array([-1 for i in range(inds.shape[-1])])
-    masked = exmp_scl[tuple(inds.T)]==0
+    masked = np.logical_or(exmp_scl[tuple(inds.T)]==0,np.isnan(exmp_scl[tuple(inds.T)]))
     inds[masked] = np.array([-1 for i in range(inds.shape[-1])])
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
     inverse = inverse.reshape(ind_shape)
@@ -341,7 +341,7 @@ def vort_data_retrieve_with_face(pt,grain = None,exmp_vel = None):
         inds = convert_uv_ind_back(inds,grain)
     neg = np.where(inds.min(axis = -1)<0)
     inds[neg] = np.array([-1 for i in range(4)])
-    masked = exmp_vel[tuple(inds.T)]==0
+    masked = np.logical_or(exmp_vel[tuple(inds.T)]==0,np.isnan(exmp_vel[tuple(inds.T)]))
     inds[masked] = np.array([-1 for i in range(4)])
     
     uni_ind,inverse = np.unique(inds,axis = 0,return_inverse = True)
@@ -349,6 +349,8 @@ def vort_data_retrieve_with_face(pt,grain = None,exmp_vel = None):
     return uni_ind, inverse, (rotu,rotv)
 
 def convert_back(ind,grain,c_or_g = 'c'):
+    """Convert subsampled grid back to original.
+    """
     if c_or_g == 'c':
         xc_start = np.ceil(grain/2)-1
     else:
@@ -369,7 +371,36 @@ def convert_uv_ind_back(vinds,grain):
     return vinds
 
 def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None,exmp_vel = None,exmp_scl = None):
-    """Get everything necessary given lat lon and ocedata. 
+    """Create the interpolator
+    
+    Parameters
+    ----------
+    oce: sd.OceData
+        The dataset to interpolate on
+    lat,lon: np.ndarray
+        Location for the interpolation
+    var: string
+        Either "vort" for vorticity or "scalar" for scalars
+    grain: int
+        The size of the coarse graining of oce
+    exmp_vel: np.ndarray
+        An single time step and layer of UV stacked together,
+        for LLC4320, the shape should be (2,13,90,90).
+        Used for masking. 
+    exmp_scl: np.ndarray
+        An single time step and layer of an scalar field,
+        preferably salinity or something does not have zero as value. 
+        
+    Returns
+    -------
+    weight: np.ndarray or tuple
+        The weight function used for interpolation.
+        If tuple, it is for both UV velocity. 
+    ind: np.ndarray of int
+        The indices of datas to retrieve
+    inverse: np.ndarray or tuple
+        Connect the retrieved data to the points of interest
+        If tuple, the second element (int) devides which part is for U and V,respectively. 
     """
     pt = sd_position_from_latlon(lat,lon,oce)
     if var == 'scalar':
@@ -394,6 +425,7 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None,exm
         return (du_weight.astype('float32'),dv_weight.astype('float32')),ind.astype('int32'),(inverse.astype('int32'),splitter)
     
 def store_interpolator(env,zooms,subocedata,unique_grains,inverse_grain,exmp_vel = None,exmp_scl = None):# pragma: no cover
+    """A thin wrapper around weight_index_inverse_from_latlon to write into lmdb dataset"""
     with env.begin(write=True) as txn:
         for iz,zoom in enumerate(zooms):
             print(zoom)
