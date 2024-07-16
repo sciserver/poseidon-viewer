@@ -233,7 +233,10 @@ def sd_position_from_latlon(lat,lon,ocedata):
 def calc_scalar_weight(pt):
     """Thin wrapper aroung sd.utils.weight_f_node
     """
-    return sd.utils.weight_f_node(pt.rxg,pt.ryg)[:,[2,3,1,0]]
+    weight = sd.utils.weight_f_node(pt.rxg,pt.ryg)[:,[2,3,1,0]]
+    iregular = np.where(weight.max(axis = -1)>1.2)
+    weight[iregular] = np.array([0.25,0.25,0.25,0.25])
+    return weight
 
 def scalar_data_retrieve(pt,scalar_knw = scalar_knw):
     """Find the indexes to read for the particles

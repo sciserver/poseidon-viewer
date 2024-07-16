@@ -12,21 +12,6 @@ import lmdb
 import cmocean
 import fsspec
 
-combined_velocities = 'file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_velocities.json'
-combined_scalars = 'file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_scalars.json'
-fs_s = fsspec.filesystem('reference', fo=combined_scalars)
-fs_v = fsspec.filesystem('reference', fo=combined_velocities)
-mapper_v = fs_v.get_mapper('')
-mapper_s = fs_s.get_mapper('')
-
-prefix = '/api/values/'
-dataset = zarr.open(mapper_s, mode='r')
-datasetV = zarr.open(mapper_v, mode='r')
-lmdb_path = '/home/idies/workspace/Temporary/wenrui/scratch/first_interpolator.pickle'
-env = lmdb.open(lmdb_path, readonly=True, lock=False)
-
-value = '[]'.encode()
-
 def make_scalar_image(read_from,interpolator,varname,itime,idepth,shape = (256,256)):
     weight,ind,inverse = interpolator
     data = np.array(read_from[varname].vindex[(itime,idepth)+tuple(ind.T)])
@@ -142,19 +127,31 @@ class ValuesRequestHandler:
         res.data = ('{"value":'+ str(npimage[tile_y, tile_x]) +'}').encode()
 
 
-app = falcon.App(cors_enable=True)
-app.add_sink(TileRequestHandler().on_get, prefix)
-#app.add_sink(InterpolatorRequestHandler().on_get, '/api/interpolators/')
-app.add_static_route('/viewer', os.path.abspath('./dist'))
-app.add_route('/api/colormap', ColorMapRequestHandler())
-app.add_route('/api/shapes', ShapesRequestHandler())
-app.add_sink(ValuesRequestHandler().on_get, '/api/val/')
-
 class CustomWSGIRequestHandler(WSGIRequestHandler):
     def log_message(self, format, *args):
         pass
 
 if __name__ == '__main__':
+    combined_velocities = 'file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_velocities.json'
+    combined_scalars = 'file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_scalars.json'
+    fs_s = fsspec.filesystem('reference', fo=combined_scalars)
+    fs_v = fsspec.filesystem('reference', fo=combined_velocities)
+    mapper_v = fs_v.get_mapper('')
+    mapper_s = fs_s.get_mapper('')
+    dataset = zarr.open(mapper_s, mode='r')
+    datasetV = zarr.open(mapper_v, mode='r')
+    
+    lmdb_path = '/home/idies/workspace/Temporary/wenrui/scratch/first_interpolator.pickle'
+    env = lmdb.open(lmdb_path, readonly=True, lock=False)
+    value = '[]'.encode()
+    
+    app = falcon.App(cors_enable=True)
+    app.add_sink(TileRequestHandler().on_get, '/api/values/')
+    app.add_static_route('/viewer', os.path.abspath('./dist'))
+    app.add_route('/api/colormap', ColorMapRequestHandler())
+    app.add_route('/api/shapes', ShapesRequestHandler())
+    app.add_sink(ValuesRequestHandler().on_get, '/api/val/')
+    
     port = 8000
     with make_server('', port, app, handler_class=CustomWSGIRequestHandler) as httpd:
         print('Serving on port {}...'.format(port))
