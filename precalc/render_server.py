@@ -13,6 +13,28 @@ import cmocean
 import fsspec
 
 def make_scalar_image(read_from,interpolator,varname,itime,idepth,shape = (256,256)):
+    """create image from scalar field and interpolator
+    
+    Parameters
+    ----------
+    read_from: zarr dataset
+        the dataset to be read from
+    interpolator: tuple
+        output of weight_index_inverse_from_latlon
+    varname: string
+        key of the variable
+    itime: int
+        index of time
+    idepth: int
+        index of depth
+    shape: tuple of int
+        the shape to convert the image back to
+        
+    Returns
+    -------
+    npimage: np.ndarray
+        The image to be rendered
+    """
     weight,ind,inverse = interpolator
     data = np.array(read_from[varname].vindex[(itime,idepth)+tuple(ind.T)])
     if ind [0,0] == -1:
@@ -22,6 +44,30 @@ def make_scalar_image(read_from,interpolator,varname,itime,idepth,shape = (256,2
     return result.reshape(shape)
 
 def make_vort_image(read_from,interpolator,itime,idepth,uname = 'U',vname = 'V',shape = (256,256)):
+    """create vorticity image from vector field and interpolator
+    
+    Parameters
+    ----------
+    read_from: zarr dataset
+        the dataset to be read from
+    interpolator: tuple
+        output of weight_index_inverse_from_latlon
+    itime: int
+        index of time
+    idepth: int
+        index of depth
+    uname: string
+        key of the U velocity
+    vname: string
+        key of the V velocity
+    shape: tuple of int
+        the shape to convert the image back to
+        
+    Returns
+    -------
+    npimage: np.ndarray
+        The image to be rendered
+    """
     weight,ind,inverse = interpolator
     inverse,splitter = inverse
     data = np.empty(len(ind))
@@ -35,6 +81,7 @@ def make_vort_image(read_from,interpolator,itime,idepth,uname = 'U',vname = 'V',
     return result.reshape(shape)
 
 def np_image_from_req(req):
+    """Thin wrapper around make_xxx_image functions, parce request"""
     req_string = req.path
     params = req_string.split('/')[3:]
     variable = params[0]
@@ -141,7 +188,7 @@ if __name__ == '__main__':
     dataset = zarr.open(mapper_s, mode='r')
     datasetV = zarr.open(mapper_v, mode='r')
     
-    lmdb_path = '/home/idies/workspace/Temporary/wenrui/scratch/second_interpolator.lmdb'
+    lmdb_path = '/home/idies/workspace/Temporary/wenrui/scratch/first_interpolator.pickle'
     env = lmdb.open(lmdb_path, readonly=True, lock=False)
     value = '[]'.encode()
     

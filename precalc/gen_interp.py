@@ -393,7 +393,7 @@ def weight_index_inverse_from_latlon(oce,lat,lon,var = 'scalar',grain = None,exm
         splitter = np.searchsorted(ind[:,0],1)
         return (du_weight.astype('float32'),dv_weight.astype('float32')),ind.astype('int32'),(inverse.astype('int32'),splitter)
     
-def store_interpolator(env,zooms,subocedata,unique_grains,inverse_grain,exmp_vel = None,exmp_scl = None):
+def store_interpolator(env,zooms,subocedata,unique_grains,inverse_grain,exmp_vel = None,exmp_scl = None):# pragma: no cover
     with env.begin(write=True) as txn:
         for iz,zoom in enumerate(zooms):
             print(zoom)

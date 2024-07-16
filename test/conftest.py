@@ -1,5 +1,5 @@
 import pytest
-
+import numpy as np
 import seaduck as sd
 from seaduck import utils
 
@@ -11,7 +11,10 @@ def ds(request):
 
 @pytest.fixture(scope="session")
 def od(request):
-    return sd.OceData(utils.get_dataset(request.param))
+    tub = sd.OceData(utils.get_dataset(request.param))
+    tub['dXG'] = np.array(tub['dXG'])
+    tub['dYG'] = np.array(tub['dYG'])
+    return tub
 
 
 @pytest.fixture(scope="session")
