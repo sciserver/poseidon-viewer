@@ -141,7 +141,7 @@ if __name__ == '__main__':
     dataset = zarr.open(mapper_s, mode='r')
     datasetV = zarr.open(mapper_v, mode='r')
     
-    lmdb_path = '/home/idies/workspace/Temporary/wenrui/scratch/first_interpolator.pickle'
+    lmdb_path = '/home/idies/workspace/Temporary/wenrui/scratch/second_interpolator.lmdb'
     env = lmdb.open(lmdb_path, readonly=True, lock=False)
     value = '[]'.encode()
     

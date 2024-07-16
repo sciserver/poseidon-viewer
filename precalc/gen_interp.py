@@ -1,6 +1,7 @@
 import numpy as np
 import seaduck as sd
 import copy
+import pickle
 
 # def buildWSG84Grid(M):
 #     scales = [2**i for i in range(7)]
@@ -407,6 +408,6 @@ def store_interpolator(env,zooms,subocedata,unique_grains,inverse_grain,exmp_vel
                         sub2use = subocedata[inverse_grain[iz]]
                         grain = unique_grains[inverse_grain[iz]]
                         interpolator = weight_index_inverse_from_latlon(sub2use,y,x,var = var,grain = grain,
-                                                                        ,exmp_vel = exmp_vel,exmp_scl = exmp_scl
+                                                                        exmp_vel = exmp_vel,exmp_scl = exmp_scl
                                                                        )
                         txn.put(key, pickle.dumps(interpolator))

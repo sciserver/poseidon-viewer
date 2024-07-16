@@ -107,9 +107,9 @@ def find_common_factors(num1,num2):
     return np.array(sorted(common))
 
 def pick_grain_size(zooms,oce,resolution = 256,factor = 5):
-    rep_dx = np.percentile(tub['dXG'],90)
+    rep_dx = np.percentile(oce['dXG'],90)
     interp_dx = 6371e3/(2**zooms)/resolution
-    h_shape = tub.tp.h_shape
+    h_shape = oce.tp.h_shape
     avail = find_common_factors(h_shape[-2],h_shape[-1])
     avail_dx = avail*rep_dx
     grains = []
