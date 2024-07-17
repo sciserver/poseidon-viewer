@@ -39,6 +39,7 @@ def make_scalar_image(read_from,interpolator,varname,itime,idepth,shape = (256,2
     data = np.array(read_from[varname].vindex[(itime,idepth)+tuple(ind.T)])
     if ind [0,0] == -1:
         data[0] = np.nan
+    data[data == 0] = np.nan
     value2d = data[inverse]
     result = np.einsum('ij,ij->i',weight,value2d)
     return result.reshape(shape)
@@ -75,6 +76,7 @@ def make_vort_image(read_from,interpolator,itime,idepth,uname = 'U',vname = 'V',
     data[splitter:] = np.array(read_from[vname].vindex[(itime,idepth)+tuple(ind[splitter:,1:].T)])
     if ind [0,0] == -1:
         data[0] = np.nan
+    data[data == 0] = np.nan
     value2d = data[inverse]
     du_weight,dv_weight = weight
     result = np.einsum('ij,ij->j',du_weight,value2d[0])+np.einsum('ij,ij->j',dv_weight,value2d[1])
