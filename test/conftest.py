@@ -12,8 +12,8 @@ def ds(request):
 @pytest.fixture(scope="session")
 def od(request):
     tub = sd.OceData(utils.get_dataset(request.param))
-    tub['dXG'] = np.array(tub['dXG'])
-    tub['dYG'] = np.array(tub['dYG'])
+    tub["dXG"] = np.array(tub["dXG"])
+    tub["dYG"] = np.array(tub["dYG"])
     return tub
 
 
