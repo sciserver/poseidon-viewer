@@ -21,3 +21,7 @@ pnpm-debug.log*
 *.njsproj
 *.sln
 *.sw?
+*.ipy*
+*__pyca*
+.coverage*
+*htmlcov*

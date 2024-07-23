@@ -5,7 +5,7 @@
     <v-navigation-drawer v-model="drawerRight" app right width="400">
       <RightDrawer/>
     </v-navigation-drawer>
-    
+
     <v-main>
       <div id="popup" class="ol-popup">
       <a href="#" id="popup-closer" class="ol-popup-closer"></a>
@@ -13,7 +13,7 @@
       </div>
       <OpenLayers/>
 
-      
+
       <v-btn
         fab
         dark

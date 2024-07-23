@@ -67,7 +67,7 @@
           ></v-text-field>
         </template>
       </v-range-slider>
-      {{getDate(tempTimestamp[0])}} 
+      {{getDate(tempTimestamp[0])}}
       {{getDate(tempTimestamp[1])}}
 
       <v-row style="margin-top:16px">
@@ -111,7 +111,7 @@
             @change="updateValues()"
           ></v-text-field>
         </template>
-        
+
       </v-slider>
       {{z_levels[tempDepth]}} m
       <!--
@@ -153,12 +153,12 @@ export default {
     this.tempTimestamp = [0, this.maxTimestamp];
   },
   watch: {
-    variable: function() { 
+    variable: function() {
       this.tempMin = this.variable.defaultMin ?? this.variable.vmin;
       this.tempMax = this.variable.defaultMax ?? this.variable.vmax;
       if (this.variable.name == 'velocity') {
         this.colormap = 'seismic'
-      } 
+      }
       else if (this.variable.name == 'SST' || this.variable.name == 'Eta') {
         this.colormap = 'RdBu_r'
       }

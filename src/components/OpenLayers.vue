@@ -64,7 +64,7 @@ export default {
         this.updateUrlTemplate();
     },
     depth() {
-        this.updateUrlTemplate();  
+        this.updateUrlTemplate();
     },
     variable() {
         this.updateUrlTemplate();
@@ -175,7 +175,7 @@ export default {
           maxZoom: 6,
         }),
       });
-      
+
       this.addToolBar();
 
 
@@ -213,7 +213,7 @@ export default {
           let newX = tileCord[1] % Math.pow(2, tileCord[0])
           if (newX < 0) {
             newX = Math.pow(2, tileCord[0]) + newX;
-          } 
+          }
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
               that.content.innerHTML = '<code>' + hdms + '</code></br><code>'+response.data.value+'</code>';
@@ -245,33 +245,33 @@ export default {
       const controlBar = new Bar({ position: "top" });
       this.map.addControl(controlBar);
 
-      this.toolButtons.drawPolygon = new Toggle({	
+      this.toolButtons.drawPolygon = new Toggle({
         html: '<i class="mdi mdi-vector-polygon"></i>',
-				onToggle: (active) => {	
+				onToggle: (active) => {
           this.toggleDrawPolygon(active);
         }
       });
       controlBar.addControl(this.toolButtons.drawPolygon);
 
-      this.toolButtons.drawLine = new Toggle({	
+      this.toolButtons.drawLine = new Toggle({
         html: '<i class="mdi mdi-vector-polyline"></i>',
-				onToggle: (active) => {	
+				onToggle: (active) => {
           this.toggleDrawLine(active);
         }
       });
       controlBar.addControl(this.toolButtons.drawLine);
 
-      this.toolButtons.drawPoint = new Toggle({	
+      this.toolButtons.drawPoint = new Toggle({
         html: '<i class="mdi mdi-vector-point"></i>',
-				onToggle: (active) => {	
+				onToggle: (active) => {
           this.toggleDrawPoint(active);
         }
       });
       controlBar.addControl(this.toolButtons.drawPoint);
 
-      this.toolButtons.select = new Toggle({	
+      this.toolButtons.select = new Toggle({
         html: '<i class="fas fa-hand-pointer"></i>',
-        onToggle: (active) => {	
+        onToggle: (active) => {
           this.toggleSelect(active);
         }
       });
@@ -279,7 +279,7 @@ export default {
 
       this.toolButtons.delete = new Button({
         html: '<i class="fas fa-trash-alt"></i>',
-        handleClick: () => {	
+        handleClick: () => {
           this.removeSelected();
         },
       });
@@ -287,7 +287,7 @@ export default {
 
       this.toolButtons.export = new Button({
         html: '<i class="fas fa-file-import"></i>',
-        handleClick: () => {	
+        handleClick: () => {
           this.exportSelected();
         },
       });
@@ -295,7 +295,7 @@ export default {
 
       this.toolButtons.store = new Button({
         html: '<i class="mdi mdi-tray-arrow-down"></i>',
-        handleClick: () => {	
+        handleClick: () => {
           this.storeSelected();
         },
       });
@@ -327,13 +327,13 @@ export default {
 
       if (this.toolButtons.drawPolygon.getActive(active)) {
         this.overlayEnabled = false;
-        this.interactions.drawPolygon = new Draw({   
+        this.interactions.drawPolygon = new Draw({
           source: this.vectorLayer.getSource(),
           type:'Polygon',
         });
 
         this.interactions.modify = new Modify({
-          source: this.vectorLayer.getSource() 
+          source: this.vectorLayer.getSource()
         });
 
         this.map.addInteraction(this.interactions.drawPolygon);
@@ -352,13 +352,13 @@ export default {
 
       if (this.toolButtons.drawLine.getActive(active)) {
         this.overlayEnabled = false;
-        this.interactions.drawLine = new Draw({   
+        this.interactions.drawLine = new Draw({
           source: this.vectorLayer.getSource(),
           type:'LineString',
         });
 
         this.interactions.modify = new Modify({
-          source: this.vectorLayer.getSource() 
+          source: this.vectorLayer.getSource()
         });
 
         this.map.addInteraction(this.interactions.drawLine);
@@ -377,13 +377,13 @@ export default {
 
       if (this.toolButtons.drawPoint.getActive(active)) {
         this.overlayEnabled = false;
-        this.interactions.drawPoint = new Draw({   
+        this.interactions.drawPoint = new Draw({
           source: this.vectorLayer.getSource(),
           type:'Point',
         });
 
         this.interactions.modify = new Modify({
-          source: this.vectorLayer.getSource() 
+          source: this.vectorLayer.getSource()
         });
 
         this.map.addInteraction(this.interactions.drawPoint);
@@ -412,8 +412,8 @@ export default {
     },
 
     exportSelected() {
-      let obj =  
-      { 
+      let obj =
+      {
         type: "FeatureCollection",
         features: []
       };
@@ -429,8 +429,8 @@ export default {
     },
 
     storeSelected() {
-      let obj =  
-      { 
+      let obj =
+      {
         type: "FeatureCollection",
         features: []
       };

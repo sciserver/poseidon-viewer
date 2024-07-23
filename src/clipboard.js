@@ -3,7 +3,7 @@ import Vue from 'vue';
 export function copyTextToClipboard(text) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
-    
+
     textArea.style.top = "0";
     textArea.style.left = "0";
     textArea.style.position = "fixed";
