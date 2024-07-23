@@ -6,3 +6,6 @@ root: intro
 chapters:
 - file: notebooks
 - file: markdown-notebooks
+- file: api_reference
+  sections:
+  - file: api_ref/apiref_gen_interp

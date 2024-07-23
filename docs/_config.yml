@@ -25,6 +25,10 @@ sphinx:
     autodoc_member_order: groupwise
     html_theme_options:
       navigation_with_keys: false
+    code: |
+      import os
+      import sys
+      sys.path.insert(0, os.path.abspath('../precalc'))
 
 # Information about where the book exists on the web
 repository:
