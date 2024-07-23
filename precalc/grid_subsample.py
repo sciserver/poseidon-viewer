@@ -118,16 +118,16 @@ def find_common_factors(num1, num2):
     return np.array(sorted(common))
 
 
-def pick_grain_size(zooms, oce, resolution=256, factor=5):
+def pick_grain_size(zooms, oce, resolution=256, factor=1):
     """Figure out the approprate grain size given zoon levels"""
     rep_dx = np.percentile(oce["dXG"], 90)
-    interp_dx = 6371e3 / (2**zooms) / resolution
+    interp_dx = 6371e3 * 2 * np.pi / (2**zooms) / resolution
     h_shape = oce.tp.h_shape
     avail = find_common_factors(h_shape[-2], h_shape[-1])
     avail_dx = avail * rep_dx
     grains = []
     for dx in interp_dx:
-        grain_level, interp_res = sd.utils.find_ind(avail_dx, factor * dx, above=False)
+        grain_level, interp_res = sd.utils.find_ind(avail_dx, dx * factor, above=False)
         # could add some functions to avoid odd numbers
         grain = avail[grain_level]
         grains.append(grain)
