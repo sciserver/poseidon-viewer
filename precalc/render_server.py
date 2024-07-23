@@ -10,6 +10,9 @@ import pickle
 import os
 import lmdb
 import fsspec
+import cmocean
+
+cmo = cmocean.cm
 
 
 def make_scalar_image(
@@ -38,7 +41,10 @@ def make_scalar_image(
         The image to be rendered
     """
     weight, ind, inverse = interpolator
-    data = np.array(read_from[varname].vindex[(itime, idepth) + tuple(ind.T)])
+    if varname == "Eta":
+        data = np.array(read_from[varname].vindex[(itime,) + tuple(ind.T)])
+    else:
+        data = np.array(read_from[varname].vindex[(itime, idepth) + tuple(ind.T)])
     if ind[0, 0] == -1:
         data[0] = np.nan
     data[data == 0] = np.nan
