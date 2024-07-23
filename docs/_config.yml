@@ -20,15 +20,6 @@ sphinx:
   extra_extensions:
   - 'sphinx.ext.autodoc'
   - 'sphinx.ext.napoleon'
-  config:
-    html_theme: sphinx_book_theme
-    autodoc_member_order: groupwise
-    html_theme_options:
-      navigation_with_keys: false
-    code: |
-      import os
-      import sys
-      sys.path.insert(0, os.path.abspath('../precalc'))
 
 # Information about where the book exists on the web
 repository:

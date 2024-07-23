@@ -26,3 +26,5 @@ pnpm-debug.log*
 .coverage*
 *htmlcov*
 *_build*
+*egg-info*
+build/
