@@ -25,3 +25,4 @@ pnpm-debug.log*
 *__pyca*
 .coverage*
 *htmlcov*
+*_build*
