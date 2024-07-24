@@ -1,11 +1,8 @@
-# Welcome to your Jupyter Book
+# Welcome to Poseidon Viewer
 
-This is a small sample book to give you a feel for how book content is
-structured.
-It shows off a few of the major file types, as well as some sample content.
-It does not go in-depth into any particular topic - check out [the Jupyter Book documentation](https://jupyterbook.org) for more information.
-
-Check out the content pages bundled with this sample book to see more.
+This is a small documentation for creating visualization tool for your own ocean datasets.
+As of now, the visualization tool only supports the LLC4320 dataset, but it will be expanded to all the datasets we host on [sciserver](https://apps.sciserver.org/dashboard/) and beyond.
+The backend interpolation used by this tool is powered by the python package [seaduck](https://github.com/MaceKuailv/seaduck).
 
 ```{tableofcontents}
 ```

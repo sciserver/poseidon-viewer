@@ -4,8 +4,9 @@
 format: jb-book
 root: intro
 chapters:
-- file: notebooks
-- file: markdown-notebooks
+- file: how_to_use
+- file: create_interpolator_for_LLC.md
 - file: api_reference
   sections:
   - file: api_ref/apiref_gen_interp
+  - file: api_ref/apiref_grid_subsample

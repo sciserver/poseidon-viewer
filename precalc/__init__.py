@@ -1,4 +1,1 @@
-__all = [
-	"gen_interp",
-	"grid_subsample"
-]
+__all = ["gen_interp", "grid_subsample"]
