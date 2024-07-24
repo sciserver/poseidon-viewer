@@ -3,12 +3,12 @@ name: on-push
 on:
   push:
     branches:
-    - main
+    - master
     tags:
     - '*'
   pull_request:
     branches:
-    - main
+    - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -25,7 +25,6 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.9", "3.12"]
-        optional-dependencies: ["", "numba"]
 
     steps:
     - uses: actions/checkout@v4
