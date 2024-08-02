@@ -2,6 +2,7 @@
 channels:
 - conda-forge
 - nodefaults
+- pip
 dependencies:
 - matplotlib
 - xarray
@@ -10,3 +11,5 @@ dependencies:
 - lmdb
 - seaduck
 - dask
+- jupyter-book
+- pre-commit

@@ -6,7 +6,7 @@ First down load the tool with git,
 git clone https://github.com/sciserver/poseidon-viewer.git
 ```
 
-To create the interpolator, simply run the notebook [create_interpolator_for_LLC](create_interpolator_for_LLC). 
+To create the interpolator, simply run the notebook [create_interpolator_for_LLC](create_interpolator_for_LLC).
 
 For functions used in the notebook, documentations are [here](api_reference).
 
