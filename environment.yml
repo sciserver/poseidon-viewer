@@ -13,3 +13,7 @@ dependencies:
 - dask
 - jupyter-book
 - pre-commit
+- pytest
+- make
+- pytest-cov
+- pooch
