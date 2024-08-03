@@ -1,4 +1,4 @@
-# Public API Reference
+# API Reference
 
 Subsample the `sd.OceData` object: [grid_subsample](api_ref/apiref_grid_subsample).
 
