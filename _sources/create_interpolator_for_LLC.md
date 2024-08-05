@@ -4,7 +4,7 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.16.4
+    jupytext_version: 1.14.5
 kernelspec:
   display_name: Python 3.8 (py38)
   language: python
@@ -22,11 +22,6 @@ import dask.array as da
 import oceanspy as ospy
 from precalc.gen_interp import store_interpolator
 from precalc.grid_subsample import generate_subocedata
-```
-
-```{code-cell} ipython3
-import warnings
-warnings.filterwarnings("ignore")
 ```
 
 So far, we only support interpolator for the LLC4320 dataset. So, first, we load the dataset with the help from oceanspy.
