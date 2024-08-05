@@ -3,23 +3,6 @@ import seaduck as sd
 import copy
 import pickle
 
-# def buildWSG84Grid(M):
-#     scales = [2**i for i in range(7)]
-#     if M/256 not in scales:
-#         print('M error')
-#         return None,None
-
-#     x = np.array(range(M))+0.5
-#     y = np.array(range(M))+0.5
-
-#     sc = M/(2*math.pi)
-#     lon = np.rad2deg(x/sc- math.pi)
-#     lat = np.rad2deg(2*(np.arctan(np.exp(math.pi - y/sc))- math.pi/4))
-
-#     px,py = np.meshgrid(lon,lat)
-
-#     return px,py
-
 scalar_kernel = np.array([[0, 0], [-1, 0], [0, -1], [-1, -1]])
 vortv_kernel = np.array(
     [

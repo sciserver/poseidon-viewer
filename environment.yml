@@ -1,0 +1,19 @@
+# environment.yml: Mandatory dependencies only.
+channels:
+- conda-forge
+- nodefaults
+- pip
+dependencies:
+- matplotlib
+- xarray
+- numpy
+- zarr
+- lmdb
+- seaduck
+- dask
+- jupyter-book
+- pre-commit
+- pytest
+- make
+- pytest-cov
+- pooch
