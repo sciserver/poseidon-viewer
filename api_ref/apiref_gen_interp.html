@@ -1,0 +1,711 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>precalc.gen_interp &#8212; My sample book</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=87e54e7c" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'api_ref/apiref_gen_interp';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="precalc.grid_subsample" href="apiref_grid_subsample.html" />
+    <link rel="prev" title="API Reference" href="../api_reference.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="My sample book - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="My sample book - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Welcome to Poseidon Viewer
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../how_to_use.html">How to use</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../create_interpolator_for_LLC.html">Create interpolator for datasets</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../api_reference.html">API Reference</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">precalc.gen_interp</a></li>
+<li class="toctree-l2"><a class="reference internal" href="apiref_grid_subsample.html">precalc.grid_subsample</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/sciserver/poseidon-viewer" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/sciserver/poseidon-viewer/issues/new?title=Issue%20on%20page%20%2Fapi_ref/apiref_gen_interp.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/api_ref/apiref_gen_interp.rst" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.rst</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>precalc.gen_interp</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.calc_scalar_weight"><code class="docutils literal notranslate"><span class="pre">calc_scalar_weight()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.convert_back"><code class="docutils literal notranslate"><span class="pre">convert_back()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.convert_uv_ind_back"><code class="docutils literal notranslate"><span class="pre">convert_uv_ind_back()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.fatten_h"><code class="docutils literal notranslate"><span class="pre">fatten_h()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.find_diagnal_index_with_face_vectorized"><code class="docutils literal notranslate"><span class="pre">find_diagnal_index_with_face_vectorized()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.lonlat4global_map"><code class="docutils literal notranslate"><span class="pre">lonlat4global_map()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.scalar_data_retrieve"><code class="docutils literal notranslate"><span class="pre">scalar_data_retrieve()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.sd_position_from_latlon"><code class="docutils literal notranslate"><span class="pre">sd_position_from_latlon()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.store_interpolator"><code class="docutils literal notranslate"><span class="pre">store_interpolator()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.vort_data_retrieve_with_face"><code class="docutils literal notranslate"><span class="pre">vort_data_retrieve_with_face()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.weight_index_inverse_from_latlon"><code class="docutils literal notranslate"><span class="pre">weight_index_inverse_from_latlon()</span></code></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="module-precalc.gen_interp">
+<span id="precalc-gen-interp"></span><h1>precalc.gen_interp<a class="headerlink" href="#module-precalc.gen_interp" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.calc_scalar_weight">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">calc_scalar_weight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.calc_scalar_weight" title="Link to this definition">#</a></dt>
+<dd><p>Thin wrapper aroung sd.utils.weight_f_node</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.convert_back">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">convert_back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ind</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c_or_g</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'c'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.convert_back" title="Link to this definition">#</a></dt>
+<dd><p>Convert subsampled grid back to original.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.convert_uv_ind_back">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">convert_uv_ind_back</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">vinds</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grain</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.convert_uv_ind_back" title="Link to this definition">#</a></dt>
+<dd><p>Return the original index for UV grid</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.fatten_h">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">fatten_h</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">knw</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ind_moves_kwarg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.fatten_h" title="Link to this definition">#</a></dt>
+<dd><p>Mirror the Position._fatten_h method in seaduck.</p>
+<p>Fatten means to find the neighboring points of the points of interest based on the kernel.
+faces,iys,ixs are 1d arrays of size n.
+We are applying a kernel of size m.
+This is going to return a n * m array of indexes.
+A very slim vector is now a matrix, and hence the name.
+each row represen all the node needed for interpolation of a single point.
+“h” represent we are only doing it on the horizontal plane.
+This function here is more lenient in the sense that it will return -1 when the index is not legal.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>knw</strong> (<em>KnW object</em>) – The kernel used to find neighboring points.</p></li>
+<li><p><strong>ind_moves_kward</strong> (<em>dict</em><em>, </em><em>optional</em>) – Key word argument to put into ind_moves method of the Topology object.
+Read Topology.ind_moves for more detail.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.find_diagnal_index_with_face_vectorized">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">find_diagnal_index_with_face_vectorized</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">face</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">iy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ix</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tp</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xoffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yoffset</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">moves</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">[0,</span> <span class="pre">3]</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cuvwg</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'G'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.find_diagnal_index_with_face_vectorized" title="Link to this definition">#</a></dt>
+<dd><p>Find the index for dataset with face connection</p>
+<p>Finding the diagnal one involve moving in two directions,
+which is not always straightforward when there is face</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.lonlat4global_map">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">lonlat4global_map</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">zoom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">j</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">i</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">resolution</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">256</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.lonlat4global_map" title="Link to this definition">#</a></dt>
+<dd><p>Create lat lon points for a subdomain (rendering unit)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>zoom</strong> (<em>int</em>) – The level of zoom it is. Enlarged 2^zoom time compared to zoom=0</p></li>
+<li><p><strong>j</strong> (<em>int</em>) – Which subdomain in the latitude direction</p></li>
+<li><p><strong>i</strong> (<em>int</em>) – Which subdomain in the longitudinal direction</p></li>
+<li><p><strong>resolution</strong> (<em>int</em>) – How many pixels in each direction of the subdomain.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>lon,lat</strong> – 2D arrays of longitude and latitude</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.scalar_data_retrieve">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">scalar_data_retrieve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scalar_knw=&lt;seaduck.kernel_weight.KnW</span> <span class="pre">object&gt;</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grain=None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exmp_scl=None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.scalar_data_retrieve" title="Link to this definition">#</a></dt>
+<dd><p>Find the indexes to read for the particles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>pt</strong> (<em>sd.Position</em>) – The particle location object</p></li>
+<li><p><strong>scalar_knw</strong> (<em>sd.KnW</em>) – The kernel object that determines the neighbor points to read.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>uni_ind</strong> (<em>np.ndarray</em>) – A 2D array containing all the indices to read</p></li>
+<li><p><strong>inverse</strong> (<em>np.ndarray</em>) – Unravel the data to construct the interpolation</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.sd_position_from_latlon">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">sd_position_from_latlon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ocedata</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.sd_position_from_latlon" title="Link to this definition">#</a></dt>
+<dd><p>Create seaduck.Position object for interpolation</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lat</strong> (<em>np.ndarray</em>) – 1D array of latitude and longitude</p></li>
+<li><p><strong>lon</strong> (<em>np.ndarray</em>) – 1D array of latitude and longitude</p></li>
+<li><p><strong>ocedata</strong> (<em>sd.OceData</em>) – Ocean Dataset to perform interpolation</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><strong>pt</strong> – The position object, the cornerstone for interpolation,
+The extra indices is index of the closest corner point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>sd.Postion</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.store_interpolator">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">store_interpolator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">env</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">zooms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">subocedata</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">unique_grains</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inverse_grain</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exmp_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exmp_scl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.store_interpolator" title="Link to this definition">#</a></dt>
+<dd><p>A thin wrapper around weight_index_inverse_from_latlon to write into lmdb dataset</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.vort_data_retrieve_with_face">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">vort_data_retrieve_with_face</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">pt</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exmp_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.vort_data_retrieve_with_face" title="Link to this definition">#</a></dt>
+<dd><p>Find the indexes to read for the particles</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>pt</strong> (<em>sd.Position</em>) – The particle location object</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>uni_ind</strong> (<em>np.ndarray</em>) – A 2D array containing all the indices to read.
+Every row contain information of whether it is u or v</p></li>
+<li><p><strong>inverse</strong> (<em>np.ndarray</em>) – Unravel the data to construct the interpolation</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="precalc.gen_interp.weight_index_inverse_from_latlon">
+<span class="sig-prename descclassname"><span class="pre">precalc.gen_interp.</span></span><span class="sig-name descname"><span class="pre">weight_index_inverse_from_latlon</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">oce</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">var</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'scalar'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">grain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exmp_vel</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">exmp_scl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#precalc.gen_interp.weight_index_inverse_from_latlon" title="Link to this definition">#</a></dt>
+<dd><p>Create the interpolator</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>oce</strong> (<em>sd.OceData</em>) – The dataset to interpolate on</p></li>
+<li><p><strong>lat</strong> (<em>np.ndarray</em>) – Location for the interpolation</p></li>
+<li><p><strong>lon</strong> (<em>np.ndarray</em>) – Location for the interpolation</p></li>
+<li><p><strong>var</strong> (<em>string</em>) – Either “vort” for vorticity or “scalar” for scalars</p></li>
+<li><p><strong>grain</strong> (<em>int</em>) – The size of the coarse graining of oce</p></li>
+<li><p><strong>exmp_vel</strong> (<em>np.ndarray</em>) – An single time step and layer of UV stacked together,
+for LLC4320, the shape should be (2,13,90,90).
+Used for masking.</p></li>
+<li><p><strong>exmp_scl</strong> (<em>np.ndarray</em>) – An single time step and layer of an scalar field,
+preferably salinity or something does not have zero as value.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><ul class="simple">
+<li><p><strong>weight</strong> (<em>np.ndarray or tuple</em>) – The weight function used for interpolation.
+If tuple, it is for both UV velocity.</p></li>
+<li><p><strong>ind</strong> (<em>np.ndarray of int</em>) – The indices of datas to retrieve</p></li>
+<li><p><strong>inverse</strong> (<em>np.ndarray or tuple</em>) – Connect the retrieved data to the points of interest
+If tuple, the second element (int) devides which part is for U and V,respectively.</p></li>
+</ul>
+</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./api_ref"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../api_reference.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">API Reference</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="apiref_grid_subsample.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">precalc.grid_subsample</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.calc_scalar_weight"><code class="docutils literal notranslate"><span class="pre">calc_scalar_weight()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.convert_back"><code class="docutils literal notranslate"><span class="pre">convert_back()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.convert_uv_ind_back"><code class="docutils literal notranslate"><span class="pre">convert_uv_ind_back()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.fatten_h"><code class="docutils literal notranslate"><span class="pre">fatten_h()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.find_diagnal_index_with_face_vectorized"><code class="docutils literal notranslate"><span class="pre">find_diagnal_index_with_face_vectorized()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.lonlat4global_map"><code class="docutils literal notranslate"><span class="pre">lonlat4global_map()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.scalar_data_retrieve"><code class="docutils literal notranslate"><span class="pre">scalar_data_retrieve()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.sd_position_from_latlon"><code class="docutils literal notranslate"><span class="pre">sd_position_from_latlon()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.store_interpolator"><code class="docutils literal notranslate"><span class="pre">store_interpolator()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.vort_data_retrieve_with_face"><code class="docutils literal notranslate"><span class="pre">vort_data_retrieve_with_face()</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#precalc.gen_interp.weight_index_inverse_from_latlon"><code class="docutils literal notranslate"><span class="pre">weight_index_inverse_from_latlon()</span></code></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By The Jupyter Book Community
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
