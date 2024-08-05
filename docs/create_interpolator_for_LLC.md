@@ -1,15 +1,6 @@
----
-jupytext:
-  text_representation:
-    extension: .md
-    format_name: myst
-    format_version: 0.13
-    jupytext_version: 1.16.4
-kernelspec:
-  display_name: Python 3.8 (py38)
-  language: python
-  name: py38
----
+______________________________________________________________________
+
+## jupytext: text_representation: extension: .md format_name: myst format_version: 0.13 jupytext_version: 1.16.4 kernelspec: display_name: Python 3.8 (py38) language: python name: py38
 
 # Create interpolator for datasets
 

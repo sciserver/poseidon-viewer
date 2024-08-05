@@ -16,4 +16,3 @@ conda-env-update:
 
 docs-build:
 	jupyter-book build docs/ -W --keep-going
-
