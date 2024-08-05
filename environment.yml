@@ -17,3 +17,4 @@ dependencies:
 - make
 - pytest-cov
 - pooch
+- tqdm
