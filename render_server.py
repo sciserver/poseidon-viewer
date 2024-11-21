@@ -105,8 +105,7 @@ def np_image_from_req(req):
     req_string = req.path
     params = req_string.split("/")[3:]
     variable = params[0]
-    if variable == "velocity":
-        # TODO: make the names for vorticity make more sense
+    if variable == "vorticity":
         interpolator_type = "vort"
     else:
         interpolator_type = "scalar"
@@ -217,7 +216,8 @@ if __name__ == "__main__":
     datasetV = zarr.open(mapper_v, mode="r")
 
     lmdb_path = (
-        "/home/idies/workspace/Temporary/wenrui/scratch/second_interpolator.lmdb"
+#       "/home/idies/workspace/Temporary/wenrui/scratch/second_interpolator.lmdb"
+        "/home/idies/workspace/Temporary/Thomas.Haine/scratch/poseidon-viewer/second_interpolator.lmdb/"
     )
     env = lmdb.open(lmdb_path, readonly=True, lock=False)
     value = "[]".encode()
