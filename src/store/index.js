@@ -38,7 +38,8 @@ export default new Vuex.Store({
         units: 'm'
       },
       {
-        name: 'velocity',
+        //name: 'velocity',
+        name: 'vorticity',
         label: 'Vorticity',
         vmin: -0.001,
         defaultMin: -0.00015,
