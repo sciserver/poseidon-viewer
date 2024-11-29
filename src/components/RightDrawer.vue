@@ -156,7 +156,7 @@ export default {
     variable: function() {
       this.tempMin = this.variable.defaultMin ?? this.variable.vmin;
       this.tempMax = this.variable.defaultMax ?? this.variable.vmax;
-      if (this.variable.name == 'velocity') {
+      if (this.variable.name == 'vorticity') {
         this.colormap = 'seismic'
       }
       else if (this.variable.name == 'SST' || this.variable.name == 'Eta') {
