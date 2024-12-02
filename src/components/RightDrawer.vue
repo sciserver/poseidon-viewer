@@ -1,7 +1,8 @@
 <template>
   <v-container>
     <v-form>
-      <v-select
+        <v-select
+        v-bind="props"
         v-model="variable"
         :items="variables"
         :item-text="'label'"
