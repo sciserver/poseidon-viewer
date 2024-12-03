@@ -83,12 +83,15 @@
       <span>Select maximum value</span>
       </v-tooltip>
       <v-divider style="margin: 8px 0 8px 0"/>
+
+<!--
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
         v-bind="attrs"
         v-on="on"
       >
+-->
       <v-range-slider
         v-model="tempTimestamp"
         :max="maxTimestamp"
@@ -113,19 +116,22 @@
           ></v-text-field>
         </template>
       </v-range-slider>
+<!--
       </v-container>
       </template>
       <span>Select time span</span>
       </v-tooltip>
-      <p>From: {{getDate(tempTimestamp[1])}}</p>
-      <p>To: {{getDate(tempTimestamp[1])}}</p>
-
+-->
+      <p> From: {{getDate(tempTimestamp[0])}} </p>
+      <p> To:   {{getDate(tempTimestamp[1])}} </p>
+<!--
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
         v-bind="attrs"
         v-on="on"
       >
+-->
       <v-row style="margin-top:16px">
         <v-col class="col-12">
           <v-row align="center">
@@ -149,10 +155,13 @@
           </v-row>
         </v-col>
       </v-row>
+<!--
       </v-container>
       </template>
       <span>Select time step</span>
       </v-tooltip>
+-->
+
       <v-divider style="margin: 16px 0 8px 0"/>
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
@@ -204,6 +213,12 @@
       </template>
       <span>Toggle grid display</span>
       </v-tooltip>
+      <v-divider style="margin: 16px 0 8px 0"/>
+
+      <p class="text-center">
+      Click anywhere on the ocean to see the spot value of the field.
+    </p>
+
     </v-form>
   </v-container>
 </template>

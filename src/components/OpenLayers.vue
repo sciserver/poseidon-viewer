@@ -216,7 +216,7 @@ export default {
           }
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
-              that.content.innerHTML = '<code>' + hdms + '</code></br><code>'+response.data.value+'</code>';
+              that.content.innerHTML = '<code>' + hdms + '</code></br><code>'+response.data.value+response.data.units+'</code>';
               that.overlay.setPosition(coordinate);
               //console.log(response.data)
           })
@@ -245,32 +245,32 @@ export default {
       const controlBar = new Bar({ position: "top" });
       this.map.addControl(controlBar);
 
-      this.toolButtons.drawPolygon = new Toggle({
-        html: '<i class="mdi mdi-vector-polygon"></i>',
-				onToggle: (active) => {
-          this.toggleDrawPolygon(active);
-        }
-      });
-      controlBar.addControl(this.toolButtons.drawPolygon);
-
-      this.toolButtons.drawLine = new Toggle({
-        html: '<i class="mdi mdi-vector-polyline"></i>',
-				onToggle: (active) => {
-          this.toggleDrawLine(active);
-        }
-      });
-      controlBar.addControl(this.toolButtons.drawLine);
-
       this.toolButtons.drawPoint = new Toggle({
-        html: '<i class="mdi mdi-vector-point"></i>',
+        html: '<i class="mdi mdi-vector-point" title="Select stations with points"></i>',
 				onToggle: (active) => {
           this.toggleDrawPoint(active);
         }
       });
       controlBar.addControl(this.toolButtons.drawPoint);
 
+      this.toolButtons.drawLine = new Toggle({
+        html: '<i class="mdi mdi-vector-polyline" title="Draw section with line segments"></i>',
+				onToggle: (active) => {
+          this.toggleDrawLine(active);
+        }
+      });
+      controlBar.addControl(this.toolButtons.drawLine);
+
+      this.toolButtons.drawPolygon = new Toggle({
+        html: '<i class="mdi mdi-vector-polygon" title="Draw region with a polygon"></i>',
+				onToggle: (active) => {
+          this.toggleDrawPolygon(active);
+        }
+      });
+      controlBar.addControl(this.toolButtons.drawPolygon);
+
       this.toolButtons.select = new Toggle({
-        html: '<i class="fas fa-hand-pointer"></i>',
+        html: '<i class="fas fa-hand-pointer" title="Select a drawing element"></i>',
         onToggle: (active) => {
           this.toggleSelect(active);
         }
@@ -278,7 +278,7 @@ export default {
       controlBar.addControl(this.toolButtons.select);
 
       this.toolButtons.delete = new Button({
-        html: '<i class="fas fa-trash-alt"></i>',
+        html: '<i class="fas fa-trash-alt" title="Delete drawing element"></i>',
         handleClick: () => {
           this.removeSelected();
         },
@@ -286,7 +286,7 @@ export default {
       controlBar.addControl(this.toolButtons.delete);
 
       this.toolButtons.export = new Button({
-        html: '<i class="fas fa-file-import"></i>',
+        html: '<i class="fas fa-file-import"></i> title="Copy drawing element shape to clipboard"',
         handleClick: () => {
           this.exportSelected();
         },
@@ -294,7 +294,7 @@ export default {
       controlBar.addControl(this.toolButtons.export);
 
       this.toolButtons.store = new Button({
-        html: '<i class="mdi mdi-tray-arrow-down"></i>',
+        html: '<i class="mdi mdi-tray-arrow-down" title="Store drawing element shape"></i>',
         handleClick: () => {
           this.storeSelected();
         },
