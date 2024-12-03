@@ -1,10 +1,28 @@
 <template>
   <v-container>
     <v-form>
+
     <v-container>
+    <v-row>
+    <a href="https://www.poseidon-ocean.net/" target="_blank">
       <v-img
-        src="assets/Poseidon_logo_web.png"
+        :width="200"
+        src="../assets/poseidon_logo_web.png"
       ></v-img>
+    </a>
+    <a href="https://github.com/sciserver/poseidon-viewer" target="_blank">
+      <v-img
+        :width="25"
+        src="../assets/github-mark.png"
+      ></v-img>
+    </a>
+    <a href="https://sciserver.github.io/poseidon-viewer/intro.html" target="_blank">
+      <v-img
+        :width="25"
+        src="../assets/jb_logo-square.svg"
+      ></v-img>
+    </a>
+    </v-row>
     </v-container>
 
     <v-divider style="margin: 8px 0 8px 0"/>

@@ -86,6 +86,12 @@ export default {
     }
   },
   methods: {
+    getPrettyDate(h) {
+      var d = new Date(Date.parse('2012-04-25T00:00:00.000000Z'))
+      d.setHours(d.getHours()+h)
+      const formattedDate = `${d.getFullYear()}-${d.getMonth().toString().padStart(2, '0')}-${d.getDay().toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2, '0')}Z`;
+      return formattedDate
+    },
     getDate(h) {
       var d = new Date(Date.parse('2012-04-25T00:00:00.000000Z'))
       d.setHours(d.getHours()+h)
@@ -206,6 +212,8 @@ export default {
           const b = - event.coordinate[1] + extent[3]
           const st = that.layer.getSource().getTileGrid().getTileSize()
           const se = extent[2] - extent[0]
+          const theseUnits = that.variable.units
+          const thisDateTime = that.getPrettyDate(that.timestamp)
 
           let newX = tileCord[1] % Math.pow(2, tileCord[0])
           if (newX < 0) {
@@ -214,7 +222,7 @@ export default {
 
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
-              that.content.innerHTML = '<code>' + hdms + '</code></br><code>' + response.data.value + '</code>';
+              that.content.innerHTML = thisDateTime + '</br>' + hdms + '</br>' + numeral(response.data.value,'0.000') + '&nbsp' + theseUnits;
               that.overlay.setPosition(coordinate);
               //console.log(response.data)
           })
