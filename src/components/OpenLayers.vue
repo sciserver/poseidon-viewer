@@ -27,6 +27,7 @@ import axios from 'axios';
 import Overlay from 'ol/Overlay';
 import {toLonLat} from 'ol/proj';
 import {toStringHDMS} from 'ol/coordinate';
+import numeral from 'numeral';
 export default {
   data: () => ({
       map: null,
@@ -219,10 +220,14 @@ export default {
           if (newX < 0) {
             newX = Math.pow(2, tileCord[0]) + newX;
           }
+          if (that.variable=="vorticity") {
+             format_str = '0.000e+0' }
+          else {
+             format_str = '0.000' }
 
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
-              that.content.innerHTML = thisDateTime + '</br>' + hdms + '</br>' + numeral(response.data.value,'0.000') + '&nbsp' + theseUnits;
+              that.content.innerHTML = thisDateTime + '</br>' + hdms + '</br>' + numeral(response.data.value).format(format_str) + '&nbsp' + theseUnits;
               that.overlay.setPosition(coordinate);
               //console.log(response.data)
           })
