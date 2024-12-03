@@ -11,10 +11,10 @@ export default new Vuex.Store({
     maxTimestamp: 239,
     depth: 0,
     maxDepth: 89,
-    variable: 'SSS',
+    variable: 'salinity',
     variables: [
       {
-        name: 'SSS',
+        name: 'salinity',
         label: 'Salinity',
         vmin: 30,
         vmax: 37,
@@ -22,7 +22,7 @@ export default new Vuex.Store({
         units: 'psu'
       },
       {
-        name: 'SST',
+        name: 'temperature',
         label: 'Temperature',
         vmin: -2,
         vmax: 30,
@@ -30,7 +30,7 @@ export default new Vuex.Store({
         units: '°C'
       },
       {
-        name: 'Eta',
+        name: 'sea level',
         label: 'Surface height anomaly',
         vmin: -2,
         vmax: 2,

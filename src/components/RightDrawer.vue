@@ -7,7 +7,7 @@
     <v-col>
     <a href="https://www.poseidon-ocean.net/" target="_blank" tooltip="Poseidon project website">
       <v-img
-        :height="25"
+        :width="180"
         src="../assets/poseidon_logo_web.png"
       ></v-img>
     </a>
@@ -17,7 +17,7 @@
     <v-col>
     <a href="https://github.com/sciserver/poseidon-viewer" target="_blank">
       <v-img
-        :height="25"
+        :width="50"
         src="../assets/github-mark.png"
       ></v-img>
     </a>
@@ -25,15 +25,12 @@
     <v-spacer></v-spacer>
 
     <v-col>
-    <v-tooltip left>
     <a href="https://sciserver.github.io/poseidon-viewer/intro.html" target="_blank">
       <v-img
-        :height="25"
+        :width="50"
         src="../assets/jb_logo-square.svg"
       ></v-img>
     </a>
-    <span>Documentation</span>
-    </v-tooltip>
     </v-col>
     </v-row>
     </v-container>
@@ -162,8 +159,8 @@
       </template>
       <span>Select time span</span>
       </v-tooltip>
-      <p> From: {{getDate(tempTimestamp[0])}} (shown)</p>
-      <p> To:&nbsp; &nbsp; &nbsp; {{getDate(tempTimestamp[1])}} </p>
+      <p> From: {{getPrettyDate(tempTimestamp[0])}} (shown)</p>
+      <p> To:&nbsp; &nbsp; &nbsp; {{getPrettyDate(tempTimestamp[1])}} </p>
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
@@ -290,10 +287,10 @@ export default {
       if (this.variable.name == 'vorticity') {
         this.colormap = 'seismic'
       }
-      else if (this.variable.name == 'SST' || this.variable.name == 'Eta') {
+      else if (this.variable.name == 'temperature' || this.variable.name == 'sea level') {
         this.colormap = 'RdBu_r'
       }
-      else if (this.variable.name == 'SSS') {
+      else if (this.variable.name == 'salinity') {
         this.colormap = 'cmo.haline'
       }
       else {
@@ -313,7 +310,7 @@ export default {
     }
   },
   methods: {
-    getDate(h) {
+    getPrettyDate(h) {
       var d = new Date(Date.parse('2012-04-25T00:00:00.000000Z'))
       d.setHours(d.getHours()+h)
       const formattedDate = `${d.getFullYear()}-${d.getMonth().toString().padStart(2, '0')}-${d.getDay().toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2, '0')}Z`;

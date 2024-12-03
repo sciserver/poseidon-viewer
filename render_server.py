@@ -41,7 +41,7 @@ def make_scalar_image(
         The image to be rendered
     """
     weight, ind, inverse = interpolator
-    if varname == "Eta":
+    if varname == "sea level":
         data = np.array(read_from[varname].vindex[(itime,) + tuple(ind.T)])
     else:
         data = np.array(read_from[varname].vindex[(itime, idepth) + tuple(ind.T)])
@@ -109,9 +109,9 @@ def np_image_from_req(req):
         interpolator_type = "vort"
     else:
         interpolator_type = "scalar"
-        if variable == "SST":
+        if variable == "temperature":
             variable = "Theta"
-        if variable == "SSS":
+        if variable == "salinity":
             variable = "Salt"
     timestamp = params[1]
     zoom = params[2]

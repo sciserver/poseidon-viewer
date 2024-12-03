@@ -9,6 +9,7 @@ import { Tile as TileLayer, Vector as VectorLayer, Graticule } from 'ol/layer';
 import { XYZ, TileDebug, Vector as VectorSource } from 'ol/source';
 import View from "ol/View";
 import 'ol/ol.css';
+import { mapState } from "vuex";
 import { mapFields } from "vuex-map-fields";
 import { WindLayer } from 'ol-wind';
 import data from '../assets/wind';
@@ -55,7 +56,8 @@ export default {
       geoFormat: new GeoJSON()
   }),
   computed: {
-      ...mapFields(['timestamp', 'timestamp2','depth', 'variable', 'colormap', 'min', 'max', 'showVelocity', 'showGrid'])
+    ...mapState(["maxTimestamp", "variables", "colormaps", "maxDepth","z_levels"]),
+    ...mapFields(["timestamp","timestamp2", "depth", "variable", "colormap", "min", "max", "showVelocity", "showGrid"]),
   },
   mounted() {
     this.init();
@@ -215,21 +217,25 @@ export default {
           const se = extent[2] - extent[0]
           const theseUnits = that.variable.units
           const thisDateTime = that.getPrettyDate(that.timestamp)
+          //const thisDepth = z_levels[that.depth]
+          const thisDepth = that.depth
 
           let newX = tileCord[1] % Math.pow(2, tileCord[0])
           if (newX < 0) {
             newX = Math.pow(2, tileCord[0]) + newX;
           }
-          if (that.variable=="vorticity") {
-             format_str = '0.000e+0' }
-          else {
-             format_str = '0.000' }
+          let format_str = '0.000'
+          if (that.variable.name=="vorticity") { 
+             format_str = '0.000e+0' 
+          }
+          console.log(format_str)
 
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
-              that.content.innerHTML = thisDateTime + '</br>' + hdms + '</br>' + numeral(response.data.value).format(format_str) + '&nbsp' + theseUnits;
+              that.content.innerHTML = that.variable.name + ' at:</br>' + thisDateTime + ', ' + thisDepth + 'M,</br>' +  hdms + '</br>= ' + numeral(response.data.value).format(format_str) + '&nbsp' + theseUnits;
               that.overlay.setPosition(coordinate);
               //console.log(response.data)
+              console.log(numeral(response.data.value).format(format_str) )
           })
         }
       });
