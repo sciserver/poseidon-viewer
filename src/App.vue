@@ -14,7 +14,7 @@
       <OpenLayers/>
 
 
-      <v-tooltip left>
+      <v-tooltip right>
       <template v-slot:activator="{ on, attrs }">
       <v-container
         v-bind="attrs"

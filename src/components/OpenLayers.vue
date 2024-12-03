@@ -178,8 +178,6 @@ export default {
 
       this.addToolBar();
 
-
-
       this.windLayer = new WindLayer(this.windData, {
         wrapX: true,
         forceRender: false,
@@ -192,7 +190,6 @@ export default {
       });
 
       this.map.addLayer(this.windLayer);
-
 
       this.map.on('singleclick', function (event) {
         if (that.overlayEnabled) {
@@ -214,9 +211,10 @@ export default {
           if (newX < 0) {
             newX = Math.pow(2, tileCord[0]) + newX;
           }
+
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
-              that.content.innerHTML = '<code>' + hdms + '</code></br><code>'+response.data.value+response.data.units+'</code>';
+              that.content.innerHTML = '<code>' + hdms + '</code></br><code>' + response.data.value + '</code>';
               that.overlay.setPosition(coordinate);
               //console.log(response.data)
           })
@@ -286,7 +284,7 @@ export default {
       controlBar.addControl(this.toolButtons.delete);
 
       this.toolButtons.export = new Button({
-        html: '<i class="fas fa-file-import"></i> title="Copy drawing element shape to clipboard"',
+        html: '<i class="fas fa-file-import" title="Copy drawing element shape to clipboard"></i>',
         handleClick: () => {
           this.exportSelected();
         },

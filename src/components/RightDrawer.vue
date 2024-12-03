@@ -1,6 +1,14 @@
 <template>
   <v-container>
     <v-form>
+    <v-container>
+      <v-img
+        src="assets/Poseidon_logo_web.png"
+      ></v-img>
+    </v-container>
+
+    <v-divider style="margin: 8px 0 8px 0"/>
+
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
@@ -21,6 +29,7 @@
       </template>
       <span>Select variable</span>
       </v-tooltip>
+
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
@@ -38,8 +47,11 @@
       </template>
       <span>Select colormap</span>
       </v-tooltip>
+
       <v-divider style="margin: 8px 0 8px 0"/>
+
           {{variable.units}}<v-img contain :src="colormapUrl" />
+
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
@@ -61,6 +73,7 @@
       </template>
       <span>Select minimum value</span>
       </v-tooltip>
+
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
@@ -84,14 +97,12 @@
       </v-tooltip>
       <v-divider style="margin: 8px 0 8px 0"/>
 
-<!--
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
         v-bind="attrs"
         v-on="on"
       >
--->
       <v-range-slider
         v-model="tempTimestamp"
         :max="maxTimestamp"
@@ -116,22 +127,18 @@
           ></v-text-field>
         </template>
       </v-range-slider>
-<!--
       </v-container>
       </template>
       <span>Select time span</span>
       </v-tooltip>
--->
-      <p> From: {{getDate(tempTimestamp[0])}} </p>
-      <p> To:   {{getDate(tempTimestamp[1])}} </p>
-<!--
+      <p> From: {{getDate(tempTimestamp[0])}} (shown)</p>
+      <p> To:&nbsp; &nbsp; &nbsp; {{getDate(tempTimestamp[1])}} </p>
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
       <v-container
         v-bind="attrs"
         v-on="on"
       >
--->
       <v-row style="margin-top:16px">
         <v-col class="col-12">
           <v-row align="center">
@@ -155,12 +162,10 @@
           </v-row>
         </v-col>
       </v-row>
-<!--
       </v-container>
       </template>
       <span>Select time step</span>
       </v-tooltip>
--->
 
       <v-divider style="margin: 16px 0 8px 0"/>
       <v-tooltip left>
@@ -215,8 +220,8 @@
       </v-tooltip>
       <v-divider style="margin: 16px 0 8px 0"/>
 
-      <p class="text-center">
-      Click anywhere on the ocean to see the spot value of the field.
+      <p class="text-right">
+      Click anywhere to see the spot value of the field.
     </p>
 
     </v-form>
@@ -280,7 +285,8 @@ export default {
     getDate(h) {
       var d = new Date(Date.parse('2012-04-25T00:00:00.000000Z'))
       d.setHours(d.getHours()+h)
-      return d.toISOString()
+      const formattedDate = `${d.getFullYear()}-${d.getMonth().toString().padStart(2, '0')}-${d.getDay().toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2, '0')}Z`;
+      return formattedDate
     },
     updateValues() {
       this.min = this.tempMin;
