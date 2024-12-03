@@ -19,7 +19,7 @@ export default new Vuex.Store({
         vmin: 30,
         vmax: 37,
         step: 0.1,
-        units: 'PSU'
+        units: 'psu'
       },
       {
         name: 'SST',
@@ -38,7 +38,6 @@ export default new Vuex.Store({
         units: 'm'
       },
       {
-        //name: 'velocity',
         name: 'vorticity',
         label: 'Vorticity',
         vmin: -0.001,

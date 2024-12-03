@@ -1,17 +1,32 @@
 <template>
   <v-container>
     <v-form>
-        <v-select
-        v-bind="props"
-        v-model="variable"
-        :items="variables"
-        :item-text="'label'"
-        label="variable"
-        dense
-        outlined
-        return-object
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
       >
-      </v-select>
+        <v-select
+          v-model="variable"
+          :items="variables"
+          :item-text="'label'"
+          label="variable"
+          dense
+          outlined
+          return-object
+        >
+        </v-select>
+      </v-container>
+      </template>
+      <span>Select variable</span>
+      </v-tooltip>
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-select
         v-model="colormap"
         :items="colormaps"
@@ -19,8 +34,18 @@
         dense
         outlined
       ></v-select>
+      </v-container>
+      </template>
+      <span>Select colormap</span>
+      </v-tooltip>
       <v-divider style="margin: 8px 0 8px 0"/>
           {{variable.units}}<v-img contain :src="colormapUrl" />
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'min ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
@@ -32,6 +57,16 @@
           ></v-text-field>
         </template>
       </v-slider>
+      </v-container>
+      </template>
+      <span>Select minimum value</span>
+      </v-tooltip>
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'max ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
@@ -43,7 +78,17 @@
           ></v-text-field>
         </template>
       </v-slider>
+      </v-container>
+      </template>
+      <span>Select maximum value</span>
+      </v-tooltip>
       <v-divider style="margin: 8px 0 8px 0"/>
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-range-slider
         v-model="tempTimestamp"
         :max="maxTimestamp"
@@ -68,9 +113,19 @@
           ></v-text-field>
         </template>
       </v-range-slider>
-      {{getDate(tempTimestamp[0])}}
-      {{getDate(tempTimestamp[1])}}
+      </v-container>
+      </template>
+      <span>Select time span</span>
+      </v-tooltip>
+      <p>From: {{getDate(tempTimestamp[1])}}</p>
+      <p>To: {{getDate(tempTimestamp[1])}}</p>
 
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-row style="margin-top:16px">
         <v-col class="col-12">
           <v-row align="center">
@@ -94,7 +149,17 @@
           </v-row>
         </v-col>
       </v-row>
+      </v-container>
+      </template>
+      <span>Select time step</span>
+      </v-tooltip>
       <v-divider style="margin: 16px 0 8px 0"/>
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-slider
         v-model="tempDepth"
         :max="maxDepth"
@@ -114,17 +179,31 @@
         </template>
 
       </v-slider>
-      {{z_levels[tempDepth]}} m
+      </v-container>
+      </template>
+      <span>Select depth level</span>
+      </v-tooltip>
+      Depth: {{z_levels[tempDepth]}} m
       <!--
       <v-checkbox
         v-model="showVelocity"
         label="Velocity (animation demo)"
       ></v-checkbox>
       -->
+     <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-checkbox
         v-model="showGrid"
         label="Show grid"
       ></v-checkbox>
+      </v-container>
+      </template>
+      <span>Toggle grid display</span>
+      </v-tooltip>
     </v-form>
   </v-container>
 </template>
