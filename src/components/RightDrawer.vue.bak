@@ -287,7 +287,7 @@ export default {
       if (this.variable.name == 'vorticity') {
         this.colormap = 'seismic'
       }
-      else if (this.variable.name == 'temperature' || this.variable.name == 'Eta') {
+      else if (this.variable.name == 'temperature' || this.variable.name == 'sea level') {
         this.colormap = 'RdBu_r'
       }
       else if (this.variable.name == 'salinity') {

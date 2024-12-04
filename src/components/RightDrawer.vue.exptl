@@ -78,7 +78,7 @@
 
       <v-divider style="margin: 8px 0 8px 0"/>
 
-          {{variable.units}}<v-img contain :src="colormapUrl" />
+      {{variable.units}}<v-img contain :src="colormapUrl" />
 
       <v-tooltip left>
       <template v-slot:activator="{ on, attrs }">
@@ -86,10 +86,10 @@
         v-bind="attrs"
         v-on="on"
       >
-      <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'min ['+variable.units+']'" class="align-center" @end="updateValues()">
+      <v-slider v-model="tempVar[0]" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'min ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
-            v-model="tempMin"
+            v-model="tempVar[0]"
             type="number"
             :step="variable.step"
             style="width: 80px"
@@ -99,7 +99,7 @@
       </v-slider>
       </v-container>
       </template>
-      <span>Select minimum value</span>
+      <span>Select minimum</span>
       </v-tooltip>
 
       <v-tooltip left>
@@ -108,10 +108,10 @@
         v-bind="attrs"
         v-on="on"
       >
-      <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'max ['+variable.units+']'" class="align-center" @end="updateValues()">
+      <v-slider v-model="tempVar[1]" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'max ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
-            v-model="tempMax"
+            v-model="tempVar[1]"
             type="number"
             :step="variable.step"
             style="width: 80px"
@@ -121,8 +121,50 @@
       </v-slider>
       </v-container>
       </template>
-      <span>Select maximum value</span>
+      <span>Select maximum</span>
       </v-tooltip>
+
+<!--
+      <v-divider style="margin: 8px 0 8px 0"/>
+
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
+      <v-range-slider
+        v-model="tempVar"
+        :max="variable.vmax"
+        :min="variable.vmin"
+        label="X"
+        class="align-center"
+        @end="updateValues()"
+        style="max-height:50px"
+        hide-details="true"
+      >
+        <template v-slot:append>
+          <v-text-field
+            :value="tempVar[0]"
+            type="number"
+            style="width: 60px"
+            @change="updateValues()"
+          ></v-text-field>
+          <v-text-field
+            :value="tempVar[1]"
+            type="number"
+            style="width: 60px"
+            @change="updateValues()"
+          ></v-text-field>
+        </template>
+      </v-range-slider>
+      </v-container>
+      </template>
+      <span>Select time span</span>
+      </v-tooltip>
+
+-->
+
       <v-divider style="margin: 8px 0 8px 0"/>
 
       <v-tooltip left>
@@ -159,6 +201,7 @@
       </template>
       <span>Select time span</span>
       </v-tooltip>
+
       <p> From: {{getPrettyDate(tempTimestamp[0])}} (shown)</p>
       <p> To:&nbsp; &nbsp; &nbsp; {{getPrettyDate(tempTimestamp[1])}} </p>
       <v-tooltip left>
@@ -267,8 +310,9 @@ export default {
     icon: "mdi-play",
     colormapUrl: '',
 
-    tempMin: Number(),
-    tempMax: Number(),
+    //tempMin: Number(),
+    //tempMax: Number(),
+    tempVar: [0,0],
     tempTimestamp: [0,0],
     tempDepth: Number(),
   }),
@@ -282,12 +326,12 @@ export default {
   },
   watch: {
     variable: function() {
-      this.tempMin = this.variable.defaultMin ?? this.variable.vmin;
-      this.tempMax = this.variable.defaultMax ?? this.variable.vmax;
+      this.tempVar[0] = this.variable.defaultMin ?? this.variable.vmin;
+      this.tempVar[1] = this.variable.defaultMax ?? this.variable.vmax;
       if (this.variable.name == 'vorticity') {
         this.colormap = 'seismic'
       }
-      else if (this.variable.name == 'temperature' || this.variable.name == 'Eta') {
+      else if (this.variable.name == 'temperature' || this.variable.name == 'sea level') {
         this.colormap = 'RdBu_r'
       }
       else if (this.variable.name == 'salinity') {
@@ -317,8 +361,8 @@ export default {
       return formattedDate
     },
     updateValues() {
-      this.min = this.tempMin;
-      this.max = this.tempMax;
+      this.min = this.tempVar[0];
+      this.max = this.tempVar[1];
       this.depth = this.tempDepth;
       this.timestamp = this.tempTimestamp[0];
       this.timestamp2 = this.tempTimestamp[1];

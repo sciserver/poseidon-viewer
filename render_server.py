@@ -41,7 +41,7 @@ def make_scalar_image(
         The image to be rendered
     """
     weight, ind, inverse = interpolator
-    if varname == "sea level":
+    if varname == "Eta":
         data = np.array(read_from[varname].vindex[(itime,) + tuple(ind.T)])
     else:
         data = np.array(read_from[varname].vindex[(itime, idepth) + tuple(ind.T)])

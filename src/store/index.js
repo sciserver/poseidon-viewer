@@ -30,7 +30,7 @@ export default new Vuex.Store({
         units: '°C'
       },
       {
-        name: 'sea level',
+        name: 'Eta',
         label: 'Surface height anomaly',
         vmin: -2,
         vmax: 2,

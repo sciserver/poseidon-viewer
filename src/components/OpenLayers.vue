@@ -232,7 +232,7 @@ export default {
 
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
-              that.content.innerHTML = that.variable.name + ' at:</br>' + thisDateTime + ', ' + thisDepth + 'M,</br>' +  hdms + '</br>= ' + numeral(response.data.value).format(format_str) + '&nbsp' + theseUnits;
+              that.content.innerHTML = that.variable.label + ' at:</br>' + thisDateTime + ', ' + thisDepth + 'M,</br>' +  hdms + '</br>= ' + numeral(response.data.value).format(format_str) + '&nbsp' + theseUnits;
               that.overlay.setPosition(coordinate);
               //console.log(response.data)
               console.log(numeral(response.data.value).format(format_str) )
