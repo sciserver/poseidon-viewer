@@ -217,8 +217,7 @@ export default {
           const se = extent[2] - extent[0]
           const theseUnits = that.variable.units
           const thisDateTime = that.getPrettyDate(that.timestamp)
-          //const thisDepth = z_levels[that.depth]
-          const thisDepth = that.depth
+          const thisDepth = that.z_levels[that.depth]
 
           let newX = tileCord[1] % Math.pow(2, tileCord[0])
           if (newX < 0) {
@@ -232,10 +231,9 @@ export default {
 
           axios.get(process.env.VUE_APP_SERVICE_URL + `/api/val/${that.variable.name}/${that.timestamp.toString().padStart(4,'0')}/${tileCord[0]}/${newX}/${tileCord[2]}/${that.depth}?x=${Math.floor(a/se*st)}&y=${Math.floor(b/se*st)}`)
           .then(function(response) {
-              that.content.innerHTML = that.variable.label + ' at:</br>' + thisDateTime + ', ' + thisDepth + 'M,</br>' +  hdms + '</br>= ' + numeral(response.data.value).format(format_str) + '&nbsp' + theseUnits;
+              that.content.innerHTML = that.variable.label + ' at:</br>' + thisDateTime + ', ' + numeral(thisDepth).format('0.0') + 'm,</br>' +  hdms + '</br>= ' + numeral(response.data.value).format(format_str) + '&nbsp' + theseUnits;
               that.overlay.setPosition(coordinate);
               //console.log(response.data)
-              console.log(numeral(response.data.value).format(format_str) )
           })
         }
       });
