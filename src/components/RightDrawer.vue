@@ -1,16 +1,69 @@
 <template>
   <v-container>
     <v-form>
-      <v-select
-        v-model="variable"
-        :items="variables"
-        :item-text="'label'"
-        label="variable"
-        dense
-        outlined
-        return-object
+
+    <v-container>
+    <v-row align="center">
+    <v-col>
+    <a href="https://www.poseidon-ocean.net/" target="_blank" tooltip="Poseidon project website">
+      <v-img
+        :width="180"
+        src="../assets/poseidon_logo_web.png"
+      ></v-img>
+    </a>
+    </v-col>
+    <v-spacer></v-spacer>
+
+    <v-col>
+    <a href="https://github.com/sciserver/poseidon-viewer" target="_blank">
+      <v-img
+        :width="50"
+        src="../assets/github-mark.png"
+      ></v-img>
+    </a>
+    </v-col>
+    <v-spacer></v-spacer>
+
+    <v-col>
+    <a href="https://sciserver.github.io/poseidon-viewer/intro.html" target="_blank">
+      <v-img
+        :width="50"
+        src="../assets/jb_logo-square.svg"
+      ></v-img>
+    </a>
+    </v-col>
+    </v-row>
+    </v-container>
+
+    <v-divider style="margin: 8px 0 8px 0"/>
+
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
       >
-      </v-select>
+        <v-select
+          v-model="variable"
+          :items="variables"
+          :item-text="'label'"
+          label="variable"
+          dense
+          outlined
+          return-object
+        >
+        </v-select>
+      </v-container>
+      </template>
+      <span>Select variable</span>
+      </v-tooltip>
+
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-select
         v-model="colormap"
         :items="colormaps"
@@ -18,8 +71,21 @@
         dense
         outlined
       ></v-select>
+      </v-container>
+      </template>
+      <span>Select colormap</span>
+      </v-tooltip>
+
       <v-divider style="margin: 8px 0 8px 0"/>
+
           {{variable.units}}<v-img contain :src="colormapUrl" />
+
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-slider v-model="tempMin" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'min ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
@@ -31,6 +97,17 @@
           ></v-text-field>
         </template>
       </v-slider>
+      </v-container>
+      </template>
+      <span>Select minimum value</span>
+      </v-tooltip>
+
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-slider v-model="tempMax" :min="variable.vmin" :max="variable.vmax" :step="variable.step" :label="'max ['+variable.units+']'" class="align-center" @end="updateValues()">
         <template v-slot:append>
           <v-text-field
@@ -42,7 +119,18 @@
           ></v-text-field>
         </template>
       </v-slider>
+      </v-container>
+      </template>
+      <span>Select maximum value</span>
+      </v-tooltip>
       <v-divider style="margin: 8px 0 8px 0"/>
+
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-range-slider
         v-model="tempTimestamp"
         :max="maxTimestamp"
@@ -67,9 +155,18 @@
           ></v-text-field>
         </template>
       </v-range-slider>
-      {{getDate(tempTimestamp[0])}}
-      {{getDate(tempTimestamp[1])}}
-
+      </v-container>
+      </template>
+      <span>Select time span</span>
+      </v-tooltip>
+      <p> From: {{getPrettyDate(tempTimestamp[0])}} (shown)</p>
+      <p> To:&nbsp; &nbsp; &nbsp; {{getPrettyDate(tempTimestamp[1])}} </p>
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-row style="margin-top:16px">
         <v-col class="col-12">
           <v-row align="center">
@@ -93,7 +190,18 @@
           </v-row>
         </v-col>
       </v-row>
+      </v-container>
+      </template>
+      <span>Select time step</span>
+      </v-tooltip>
+
       <v-divider style="margin: 16px 0 8px 0"/>
+      <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-slider
         v-model="tempDepth"
         :max="maxDepth"
@@ -113,17 +221,37 @@
         </template>
 
       </v-slider>
-      {{z_levels[tempDepth]}} m
+      </v-container>
+      </template>
+      <span>Select depth level</span>
+      </v-tooltip>
+      Depth: {{z_levels[tempDepth]}} m
       <!--
       <v-checkbox
         v-model="showVelocity"
         label="Velocity (animation demo)"
       ></v-checkbox>
       -->
+     <v-tooltip left>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-checkbox
         v-model="showGrid"
         label="Show grid"
       ></v-checkbox>
+      </v-container>
+      </template>
+      <span>Toggle grid display</span>
+      </v-tooltip>
+      <v-divider style="margin: 16px 0 8px 0"/>
+
+      <p class="text-right">
+      Click anywhere to see the spot value of the field.
+    </p>
+
     </v-form>
   </v-container>
 </template>
@@ -156,13 +284,13 @@ export default {
     variable: function() {
       this.tempMin = this.variable.defaultMin ?? this.variable.vmin;
       this.tempMax = this.variable.defaultMax ?? this.variable.vmax;
-      if (this.variable.name == 'velocity') {
+      if (this.variable.name == 'vorticity') {
         this.colormap = 'seismic'
       }
-      else if (this.variable.name == 'SST' || this.variable.name == 'Eta') {
+      else if (this.variable.name == 'temperature' || this.variable.name == 'Eta') {
         this.colormap = 'RdBu_r'
       }
-      else if (this.variable.name == 'SSS') {
+      else if (this.variable.name == 'salinity') {
         this.colormap = 'cmo.haline'
       }
       else {
@@ -182,10 +310,11 @@ export default {
     }
   },
   methods: {
-    getDate(h) {
+    getPrettyDate(h) {
       var d = new Date(Date.parse('2012-04-25T00:00:00.000000Z'))
       d.setHours(d.getHours()+h)
-      return d.toISOString()
+      const formattedDate = `${d.getFullYear()}-${d.getMonth().toString().padStart(2, '0')}-${d.getDay().toString().padStart(2, '0')} ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2,'0')}:${d.getSeconds().toString().padStart(2, '0')}Z`;
+      return formattedDate
     },
     updateValues() {
       this.min = this.tempMin;

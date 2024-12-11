@@ -11,18 +11,18 @@ export default new Vuex.Store({
     maxTimestamp: 239,
     depth: 0,
     maxDepth: 89,
-    variable: 'SSS',
+    variable: 'salinity',
     variables: [
       {
-        name: 'SSS',
+        name: 'salinity',
         label: 'Salinity',
         vmin: 30,
         vmax: 37,
         step: 0.1,
-        units: 'PSU'
+        units: 'psu'
       },
       {
-        name: 'SST',
+        name: 'temperature',
         label: 'Temperature',
         vmin: -2,
         vmax: 30,
@@ -38,13 +38,13 @@ export default new Vuex.Store({
         units: 'm'
       },
       {
-        name: 'velocity',
+        name: 'vorticity',
         label: 'Vorticity',
-        vmin: -0.005,
-        defaultMin: -0.002,
-        vmax: 0.005,
-        defaultMax: 0.002,
-        step: 0.0001,
+        vmin: -0.001,
+        defaultMin: -0.00015,
+        vmax: 0.001,
+        defaultMax: 0.00015,
+        step: 0.00001,
         units: '1/s'
       }
     ],

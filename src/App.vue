@@ -14,6 +14,12 @@
       <OpenLayers/>
 
 
+      <v-tooltip right>
+      <template v-slot:activator="{ on, attrs }">
+      <v-container
+        v-bind="attrs"
+        v-on="on"
+      >
       <v-btn
         fab
         dark
@@ -26,6 +32,10 @@
           mdi-menu
         </v-icon>
       </v-btn>
+      </v-container>
+      </template>
+      <span>Toggle control panel display</span>
+      </v-tooltip>
 
     </v-main>
 

@@ -19,7 +19,7 @@ export function copyTextToClipboard(text) {
             type: 'success',
             duration: 1000,
             position: 'bottom center',
-            text: 'Data copied to clipboard'
+            text: 'Drawing element data copied to clipboard'
         });
     } catch (error) {
         Vue.notify({
