@@ -4,11 +4,11 @@ jupytext:
     extension: .md
     format_name: myst
     format_version: 0.13
-    jupytext_version: 1.14.5
+    jupytext_version: 1.16.4
 kernelspec:
-  display_name: Python 3.8 (py38)
+  display_name: Oceanography
   language: python
-  name: py38
+  name: oceanography
 ---
 
 # Create interpolator for datasets
