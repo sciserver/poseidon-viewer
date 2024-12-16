@@ -29,7 +29,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install Conda environment with Micromamba
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v2
       with:
         environment-file: environment.yml
         environment-name: DEVELOP
@@ -44,7 +44,7 @@ jobs:
       run: |
         make unit-tests COV_REPORT=xml
     - name: Upload coverage reports to Codecov
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v5
 
   docs-build:
     needs: unit-tests
@@ -53,7 +53,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Install Conda environment with Micromamba
-      uses: mamba-org/setup-micromamba@v1
+      uses: mamba-org/setup-micromamba@v2
       with:
         environment-file: environment.yml
         environment-name: DEVELOP
