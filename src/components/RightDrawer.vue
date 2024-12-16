@@ -142,13 +142,13 @@
       >
         <template v-slot:append>
           <v-text-field
-            :value="tempTimestamp[0]"
+            v-model="tempTimestamp[0]"
             type="number"
             style="width: 60px"
             @change="updateValues()"
           ></v-text-field>
           <v-text-field
-            :value="tempTimestamp[1]"
+            v-model="tempTimestamp[1]"
             type="number"
             style="width: 60px"
             @change="updateValues()"
