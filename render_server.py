@@ -216,8 +216,7 @@ if __name__ == "__main__":
     datasetV = zarr.open(mapper_v, mode="r")
 
     lmdb_path = (
-#       "/home/idies/workspace/Temporary/wenrui/scratch/second_interpolator.lmdb"
-        "/home/idies/workspace/Temporary/Thomas.Haine/scratch/poseidon-viewer/second_interpolator.lmdb/"
+        "/home/idies/workspace/poseidon/data01_01/poseidon_viewer/TileInterpolators_wenrui/second_interpolator.lmdb/"
     )
     env = lmdb.open(lmdb_path, readonly=True, lock=False)
     value = "[]".encode()

@@ -18,7 +18,7 @@ export default new Vuex.Store({
         label: 'Salinity',
         vmin: 30,
         vmax: 37,
-        step: 0.1,
+        step: 0.01,
         units: 'psu'
       },
       {
@@ -49,7 +49,7 @@ export default new Vuex.Store({
       }
     ],
     colormap: 'cmo.haline',
-    colormaps: ['viridis', 'plasma', 'inferno', 'magma', 'cividis', 'seismic', 'RdBu_r', 'cmo.haline'],
+    colormaps: ['viridis','turbo', 'plasma', 'inferno', 'magma', 'cividis', 'seismic', 'RdBu_r', 'cmo.haline'],
     min: 0,
     max: 65535,
     showVelocity: false,
