@@ -26,7 +26,7 @@ export default new Vuex.Store({
         label: 'Temperature',
         vmin: -2,
         vmax: 30,
-        step: 0.1,
+        step: 0.01,
         units: '°C'
       },
       {
@@ -41,9 +41,9 @@ export default new Vuex.Store({
         name: 'vorticity',
         label: 'Vorticity',
         vmin: -0.001,
-        defaultMin: -0.00015,
+        defaultMin: -0.0001,
         vmax: 0.001,
-        defaultMax: 0.00015,
+        defaultMax: 0.0001,
         step: 0.00001,
         units: '1/s'
       }
