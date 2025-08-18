@@ -27,7 +27,7 @@ jobs:
         python-version: ["3.9", "3.12"]
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Install Conda environment with Micromamba
       uses: mamba-org/setup-micromamba@v2
       with:
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
     - name: Install Conda environment with Micromamba
       uses: mamba-org/setup-micromamba@v2
       with:
