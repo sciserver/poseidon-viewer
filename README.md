@@ -1,5 +1,7 @@
 # poseidon-viewer
 
+Find the interactive viewer here: https://web.idies.jhu.edu/poseidon-viewer/viewer/index.html
+
 ## Documentation
 
 Checkout this documentation: https://sciserver.github.io/poseidon-viewer
