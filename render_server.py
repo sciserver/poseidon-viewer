@@ -22,15 +22,15 @@ def make_scalar_image(
 
     Parameters
     ----------
-    read_from: zarr dataset
+    read_from: zarr dataset or dictionary
         the dataset to be read from
     interpolator: tuple
         output of weight_index_inverse_from_latlon
     varname: string
         key of the variable
-    itime: int
+    itime: tuple of int
         index of time
-    idepth: int
+    idepth: tuple of int
         index of depth
     shape: tuple of int
         the shape to convert the image back to
@@ -41,10 +41,10 @@ def make_scalar_image(
         The image to be rendered
     """
     weight, ind, inverse = interpolator
-    if varname == "Eta":
-        data = np.array(read_from[varname].vindex[(itime,) + tuple(ind.T)])
+    if varname in ["Eta", "KPPhbl"]:
+        data = np.array(read_from[varname].vindex[itime + tuple(ind.T)])
     else:
-        data = np.array(read_from[varname].vindex[(itime, idepth) + tuple(ind.T)])
+        data = np.array(read_from[varname].vindex[itime + idepth + tuple(ind.T)])
     if ind[0, 0] == -1:
         data[0] = np.nan
     data[data == 0] = np.nan
@@ -60,13 +60,13 @@ def make_vort_image(
 
     Parameters
     ----------
-    read_from: zarr dataset
+    read_from: zarr dataset or dictionary
         the dataset to be read from
     interpolator: tuple
         output of weight_index_inverse_from_latlon
-    itime: int
+    itime: tuple of int
         index of time
-    idepth: int
+    idepth: tuple of int
         index of depth
     uname: string
         key of the U velocity
@@ -84,10 +84,10 @@ def make_vort_image(
     inverse, splitter = inverse
     data = np.empty(len(ind))
     data[:splitter] = np.array(
-        read_from[uname].vindex[(itime, idepth) + tuple(ind[:splitter, 1:].T)]
+        read_from[uname].vindex[itime + idepth + tuple(ind[:splitter, 1:].T)]
     )
     data[splitter:] = np.array(
-        read_from[vname].vindex[(itime, idepth) + tuple(ind[splitter:, 1:].T)]
+        read_from[vname].vindex[itime + idepth + tuple(ind[splitter:, 1:].T)]
     )
     if ind[0, 0] == -1:
         data[0] = np.nan
@@ -117,18 +117,23 @@ def np_image_from_req(req):
     zoom = params[2]
     i = params[3]
     j = params[4]
-    depth = int(params[5])
+    depth = tuple([int(params[5])])
 
     with env.begin(write=False) as txn:
         key = f"{interpolator_type}/{zoom}/{i}/{j}"
         interpolator = pickle.loads(txn.get(key.encode()))
 
-    if interpolator_type == "vort":
-        npimage = make_vort_image(datasetV, interpolator, int(timestamp), depth)
+    if use_filedb:
+        itime = tuple([int(timestamp)])
     else:
-        npimage = make_scalar_image(
-            dataset, interpolator, variable, int(timestamp), depth
-        )
+        it1 = int(timestamp) // 100
+        it2 = int(timestamp) % 100
+        itime = tuple([it1, it2])
+
+    if interpolator_type == "vort":
+        npimage = make_vort_image(datasetV, interpolator, itime, depth)
+    else:
+        npimage = make_scalar_image(dataset, interpolator, variable, itime, depth)
 
     return npimage
 
@@ -206,19 +211,33 @@ class CustomWSGIRequestHandler(WSGIRequestHandler):
 
 
 if __name__ == "__main__":
-    combined_velocities = "file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_velocities.json"
-    combined_scalars = "file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_scalars.json"
-    fs_s = fsspec.filesystem("reference", fo=combined_scalars)
-    fs_v = fsspec.filesystem("reference", fo=combined_velocities)
-    mapper_v = fs_v.get_mapper("")
-    mapper_s = fs_s.get_mapper("")
-    dataset = zarr.open(mapper_s, mode="r")
-    datasetV = zarr.open(mapper_v, mode="r")
+    use_filedb = True
+    if use_filedb:
+        combined_velocities = "file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_velocities.json"
+        combined_scalars = "file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_scalars.json"
+        fs_s = fsspec.filesystem("reference", fo=combined_scalars)
+        fs_v = fsspec.filesystem("reference", fo=combined_velocities)
+        mapper_v = fs_v.get_mapper("")
+        mapper_s = fs_s.get_mapper("")
+        dataset = zarr.open(mapper_s, mode="r")
+        datasetV = zarr.open(mapper_v, mode="r")
+    else:
+        dataset = {}
+        datasetV = {}
+        for var in ["Salt", "Theta", "W"]:
+            dataset[var] = zarr.open(
+                f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
+            )
+        for var in ["Eta", "KPPhbl"]:
+            dataset[var] = zarr.open(
+                f"/home/idies/workspace/poseidon_ceph/LLC4320_2d/{var}.zarr"
+            )
+        for var in ["U", "V"]:
+            datasetV[var] = zarr.open(
+                f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
+            )
 
-    lmdb_path = (
-#       "/home/idies/workspace/Temporary/wenrui/scratch/second_interpolator.lmdb"
-        "/home/idies/workspace/Temporary/Thomas.Haine/scratch/poseidon-viewer/second_interpolator.lmdb/"
-    )
+    lmdb_path = "/home/idies/workspace/poseidon/data01_01/poseidon_viewer/TileInterpolators_wenrui/interpolator_12_25.lmdb"
     env = lmdb.open(lmdb_path, readonly=True, lock=False)
     value = "[]".encode()
 
