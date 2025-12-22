@@ -30,11 +30,27 @@ export default new Vuex.Store({
         units: '°C'
       },
       {
+        name: 'W',
+        label: 'Vertical Velocity',
+        vmin: -0.001,
+        vmax: 0.001,
+        step: 0.00005,
+        units: 'm/s'
+      },
+      {
         name: 'Eta',
         label: 'Surface height anomaly',
         vmin: -2,
         vmax: 2,
         step: 0.05,
+        units: 'm'
+      },
+      {
+        name: 'KPPhbl',
+        label: 'Boundary Layer Thickness',
+        vmin: 0,
+        vmax: 1000,
+        step: 5,
         units: 'm'
       },
       {
