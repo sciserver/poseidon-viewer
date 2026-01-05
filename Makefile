@@ -15,4 +15,4 @@ conda-env-update:
 	$(CONDA) env update $(CONDAFLAGS) -f environment.yml
 
 docs-build:
-	jupyter-book build docs/ -W
+	jupyter-book build docs/

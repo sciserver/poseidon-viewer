@@ -17,6 +17,7 @@ latex:
 
 # Add sphinx autodoc to generate api reference from code files
 sphinx:
+  config: warningiserror:true
   extra_extensions:
   - 'sphinx.ext.autodoc'
   - 'sphinx.ext.napoleon'
