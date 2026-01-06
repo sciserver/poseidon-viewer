@@ -227,15 +227,15 @@ if __name__ == "__main__":
         for var in ["Salt", "Theta", "W"]:
             dataset[var] = zarr.open(
                 f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
-            )
+            )[var]
         for var in ["Eta", "KPPhbl"]:
             dataset[var] = zarr.open(
                 f"/home/idies/workspace/poseidon_ceph/LLC4320_2d/{var}.zarr"
-            )
+            )[var]
         for var in ["U", "V"]:
             datasetV[var] = zarr.open(
                 f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
-            )
+            )[var]
 
     lmdb_path = "/home/idies/workspace/poseidon/data01_01/poseidon_viewer/TileInterpolators_wenrui/interpolator_12_25.lmdb"
     env = lmdb.open(lmdb_path, readonly=True, lock=False)
