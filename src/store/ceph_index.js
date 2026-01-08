@@ -15,7 +15,7 @@ export default new Vuex.Store({
     variables: [
       {
         name: 'salinity',
-        label: 'Salinity',
+        label: 'salinity',
         vmin: 30,
         vmax: 37,
         step: 0.1,
@@ -29,30 +29,31 @@ export default new Vuex.Store({
         step: 0.1,
         units: '°C'
       },
-      {
-        name: 'U',
-        label: 'zonal velocity',
-        vmin: -2.00,
-        defaultMin: -0.50,
-        vmax: 2.00,
-        defaultMax: 0.50,
-        step: 0.005,
-        units: 'm/s'
-      },
-      {
-        name: 'V',
-        label: 'meridional speed',
-        vmin: -2.00,
-        defaultMin: -0.50,
-        vmax: 2.00,
-        defaultMax: 0.50,
-        step: 0.005,
-        units: 'm/s'
-      },
+        // 8Jan26: Vector fields not yet ready for rendering. Wenrui needs to fix.
+        // {
+        // name: 'U',
+        // label: 'zonal velocity',
+        // vmin: -2.00,
+        // defaultMin: -0.50,
+        // vmax: 2.00,
+        // defaultMax: 0.50,
+        // step: 0.005,
+        // units: 'm/s'
+        // },
+        //{
+        //name: 'V',
+        //label: 'meridional speed',
+        //vmin: -2.00,
+        //defaultMin: -0.50,
+        //vmax: 2.00,
+        //defaultMax: 0.50,
+        //step: 0.005,
+        //units: 'm/s'
+        //},
       {
         name: 'W',
         label: 'vertical speed',
-	vmin: -0.01,
+        vmin: -0.01,
         defaultMin: -0.001,
         vmax: 0.01,
         defaultMax: 0.001,
