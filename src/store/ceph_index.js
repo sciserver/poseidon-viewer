@@ -15,7 +15,7 @@ export default new Vuex.Store({
     variables: [
       {
         name: 'salinity',
-        label: 'Salinity',
+        label: 'salinity',
         vmin: 30,
         vmax: 37,
         step: 0.1,
@@ -23,23 +23,46 @@ export default new Vuex.Store({
       },
       {
         name: 'temperature',
-        label: 'Temperature',
+        label: 'temperature',
         vmin: -2,
         vmax: 30,
         step: 0.1,
         units: '°C'
       },
+        // 8Jan26: Vector fields not yet ready for rendering. Wenrui needs to fix.
+        // {
+        // name: 'U',
+        // label: 'zonal velocity',
+        // vmin: -2.00,
+        // defaultMin: -0.50,
+        // vmax: 2.00,
+        // defaultMax: 0.50,
+        // step: 0.005,
+        // units: 'm/s'
+        // },
+        //{
+        //name: 'V',
+        //label: 'meridional speed',
+        //vmin: -2.00,
+        //defaultMin: -0.50,
+        //vmax: 2.00,
+        //defaultMax: 0.50,
+        //step: 0.005,
+        //units: 'm/s'
+        //},
       {
         name: 'W',
-        label: 'Vertical Velocity',
-        vmin: -0.001,
-        vmax: 0.001,
-        step: 0.00005,
+        label: 'vertical speed',
+        vmin: -0.01,
+        defaultMin: -0.001,
+        vmax: 0.01,
+        defaultMax: 0.001,
+        step: 0.0001,
         units: 'm/s'
       },
       {
         name: 'Eta',
-        label: 'Surface height anomaly',
+        label: 'surface height anomaly',
         vmin: -2,
         vmax: 2,
         step: 0.05,
@@ -47,7 +70,7 @@ export default new Vuex.Store({
       },
       {
         name: 'KPPhbl',
-        label: 'Boundary Layer Thickness',
+        label: 'boundary Layer Thickness',
         vmin: 0,
         vmax: 1000,
         step: 5,
@@ -55,7 +78,7 @@ export default new Vuex.Store({
       },
       {
         name: 'vorticity',
-        label: 'Vorticity',
+        label: 'vertical vorticity',
         vmin: -0.001,
         defaultMin: -0.00015,
         vmax: 0.001,
