@@ -224,7 +224,7 @@ export default {
             newX = Math.pow(2, tileCord[0]) + newX;
           }
           let format_str = '0.000'
-          if (that.variable.name=="vorticity") {
+          if (that.variable.name=="vorticity" || that.variable.name=="W") {
              format_str = '0.000e+0'
           }
           console.log(format_str)

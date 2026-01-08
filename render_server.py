@@ -211,7 +211,8 @@ class CustomWSGIRequestHandler(WSGIRequestHandler):
 
 
 if __name__ == "__main__":
-    use_filedb = True
+#   use_filedb = True
+    use_filedb = False
     if use_filedb:
         combined_velocities = "file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_velocities.json"
         combined_scalars = "file:///home/idies/workspace/poseidon/data01_01/poseidon_viewer/kerchunk/combined_scalars.json"
@@ -224,20 +225,20 @@ if __name__ == "__main__":
     else:
         dataset = {}
         datasetV = {}
-        for var in ["Salt", "Theta", "W"]:
-            dataset[var] = zarr.open(
-                f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
-            )
+        for var in ["Salt", "Theta", "U", "V", "W"]:
+            store_path = f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
+            group = zarr.open(store_path, mode="r")
+            dataset[var] = group[var]
         for var in ["Eta", "KPPhbl"]:
-            dataset[var] = zarr.open(
-                f"/home/idies/workspace/poseidon_ceph/LLC4320_2d/{var}.zarr"
-            )
+            store_path = f"/home/idies/workspace/poseidon_ceph/LLC4320_2d/{var}.zarr"
+            group = zarr.open(store_path, mode="r")
+            dataset[var] = group[var]
         for var in ["U", "V"]:
-            datasetV[var] = zarr.open(
-                f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
-            )
+            store_path = f"/home/idies/workspace/poseidon_ceph/LLC4320_subsample/{var}.zarr"
+            group = zarr.open(store_path, mode="r")
+            datasetV[var] = group[var]
 
-    lmdb_path = "/home/idies/workspace/poseidon/data01_01/poseidon_viewer/TileInterpolators_wenrui/interpolator_12_25.lmdb"
+    lmdb_path = "/home/idies/workspace/poseidon_ceph/TileInterpolators_wenrui/interpolator_12_25.lmdb"
     env = lmdb.open(lmdb_path, readonly=True, lock=False)
     value = "[]".encode()
 
