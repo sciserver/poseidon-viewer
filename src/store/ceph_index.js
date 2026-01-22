@@ -70,7 +70,7 @@ export default new Vuex.Store({
       },
       {
         name: 'KPPhbl',
-        label: 'boundary Layer Thickness',
+        label: 'boundary layer thickness',
         vmin: 0,
         vmax: 1000,
         step: 5,
